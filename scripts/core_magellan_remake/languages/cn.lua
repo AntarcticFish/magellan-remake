@@ -1,0 +1,26 @@
+STRINGS.MOD_MAGELLAN_REMAKE = {
+    DRAG_INFO = '右键拖拽',
+    ACTIONS = {
+        ACTION_COMMON_REPAIR = '修复',
+    }
+}
+STRINGS.MGL_USEANOFF = "您已经使用过此物品了！"
+STRINGS.MGL_MUST_LEVEL = "您必须先使用精一材料书。"
+STRINGS.NAMES.MGL_BOOK1 = "精一材料书"
+STRINGS.NAMES.MGL_BOOK2 = "精二材料书"
+STRINGS.MGL_ITEM_FN = "使用物品"
+STRINGS.NAMES.MGL_MOBILECHARGER = "随身充移动电源"
+STRINGS.NAMES.MGL_MAPPER_ITEM = "泛用型多功能测绘仪(物品)"
+STRINGS.NAMES.MGL_MAPPER = "泛用型多功能测绘仪"
+STRINGS.NAMES.MGL_CHARGERFUEL = "移动电源升级装置"
+STRINGS.NAMES.MGL_UAV_ITEM = "龙腾式支援无人机"
+STRINGS.NAMES.MGL_UAV = "龙腾式支援无人机"
+STRINGS.MGL_UAV_IS_MAX = "无人机已达到放置上限"
+STRINGS.MGL_POWER_LOW = "电力不足！"
+STRINGS.MGL_SKILLCDING = "此技能正在冷却当中..."
+STRINGS.MGL_UAV = {
+    [1] = "R23",
+    [2] = "LRBD",
+    [3] = "66",
+    [4] = "YHLY",
+}
