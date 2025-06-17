@@ -41,6 +41,10 @@ Assets = {
 -- 导入mod配置
 for _,v in ipairs({
 	'_lang',
+	'_key_light',
+	'_key_call_uav',
+	'_key_mgl_skill',
+	'_key_mgl_change_uav',
 
 }) do TUNING[string.upper('CONFIG_'..modid..v)] = GetModConfigData(modid..v) end
 

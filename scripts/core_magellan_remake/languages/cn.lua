@@ -19,9 +19,13 @@ STRINGS.NAMES.MGL_MAPPER = "泛用型多功能测绘仪"
 STRINGS.NAMES.MGL_CHARGERFUEL = "移动电源升级装置"
 STRINGS.NAMES.MGL_UAV_ITEM = "龙腾式支援无人机"
 STRINGS.NAMES.MGL_UAV = "龙腾式支援无人机"
+STRINGS.NAMES.MGL_MODULE1 = "教学用龙腾无人机"
+STRINGS.NAMES.MGL_MODULE2 = "专业无人机操作模块"
+
 STRINGS.MGL_UAV_IS_MAX = "无人机已达到放置上限"
 STRINGS.MGL_POWER_LOW = "电力不足！"
 STRINGS.MGL_SKILLCDING = "此技能正在冷却当中..."
+
 STRINGS.MGL_UAV = {
     [1] = "R23",
     [2] = "LRBD",
@@ -29,5 +33,5 @@ STRINGS.MGL_UAV = {
     [4] = "YHLY",
 }
 
-STRINGS.NAMES.MGL_MODULE1 = "教学用龙腾无人机"
-STRINGS.NAMES.MGL_MODULE2 = "专业无人机操作模块"
+
+

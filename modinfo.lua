@@ -5,7 +5,7 @@ local modid = 'magellan_remake'
 local LANGS = {
     ['zh'] = {
         name = '明日方舟麦哲伦 MOD',
-        description = '模板',
+        description = '麦哲伦',
         config = {
             -- {'设置的id','设置的名称','聚焦时显示的提示',默认值,{
             --     {选项一,值},
@@ -17,6 +17,10 @@ local LANGS = {
                 {'English','en'}
             }},
             {'功能'},
+            {modid..'_key_light','测绘仪照明开关','测绘仪照明开',118,op},
+            {modid..'_key_call_uav','召唤无人机按键','召唤无人机按键',122,op},
+            {modid..'_key_mgl_skill','开启技能按键','开启技能按键',120,op},
+            {modid..'_key_mgl_change_uav','切换无人机类型按键','切换无人机类型按键',103,op},
             -- {modid..'_dmgmult','伤害倍率','调整伤害倍率',1,{
             --     {'0.5倍',0.5},
             --     {'1倍',1},
@@ -25,8 +29,8 @@ local LANGS = {
         }
     },
     ['en'] = {
-        name = 'magellan_remake MOD',
-        description = 'Template',
+        name = 'magellan MOD',
+        description = 'magellan',
         config = {
             {'LANGUAGE'},
             {modid..'_lang','language','choose language','en',{
@@ -48,7 +52,7 @@ local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
 version = '1.0.0'
-author = '作者'
+author = '亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10
 priority = 0 -- 加载优先级，越低加载越晚，默认为0
