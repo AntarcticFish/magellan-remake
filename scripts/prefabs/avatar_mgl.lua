@@ -99,6 +99,25 @@ local master_postinit = function(inst)
 	foodaffinity:AddPrefabAffinity  ("moqueca",             1.33)
 	foodaffinity:AddPrefabAffinity  ("barnaclestuffedfishhead",             1.33)
 
+	--给BOSS添加特殊掉落物
+	inst:ListenForEvent("killed", function(inst, data)
+		if inst:HasTag("mgl") then
+			if data and data.victim then
+				if data.victim.prefab == "stalker_atrium" then
+					local item = SpawnPrefab("mgl_module1")
+					-- local pos = inst:GetPosition()
+					item.Transform:SetPosition(inst.Transform:GetWorldPosition())
+					-- inst.components.inventory:GiveItem(item, nil, pos)
+				elseif data.victim.prefab == "alterguardian_phase3" then
+					local item = SpawnPrefab("mgl_module2")
+					-- local pos = inst:GetPosition()
+					item.Transform:SetPosition(inst.Transform:GetWorldPosition())
+					-- inst.components.inventory:GiveItem(item, nil, pos)
+				end
+			end
+		end
+    end)
+
 	inst.components.health:SetMaxHealth(TUNING[string.upper(avatar_name)..'_HEALTH'])
 	inst.components.hunger:SetMax(TUNING[string.upper(avatar_name)..'_HUNGER'])
 	inst.components.sanity:SetMax(TUNING[string.upper(avatar_name)..'_SANITY'])

@@ -14,9 +14,12 @@ local Mgl_System = Class(function(self, inst)
     self.mgl_uav_item = nil
     -- 跟随者
     self.follower = {}
+    -- D99解锁
+    self.d99_lock = false
     self.call_cd = false
     self.uav_type = 1
     self._task = self.inst:DoPeriodicTask(1, function()
+
         self.mgl_mapper = nil
         local table = self.inst.components.inventory:GetItemsWithTag("mgl_mapper_item")
         for k, v in pairs(table) do
@@ -46,12 +49,37 @@ local Mgl_System = Class(function(self, inst)
 
         if self.mgl_mapper ~= nil and self.mgl_mapper.components.finiteuses and self.mobilecharger then --给测图仪自动充电
             local mgl_mapper_power = self.mgl_mapper.components.finiteuses:GetUses()
-            if self.mobilecharger.components.mgl_mobilecharger:GetPower() > 0 and mgl_mapper_power < 100 and (self.mgl_mapper.components.equippable and not self.mgl_mapper.components.equippable:IsEquipped()) then
+            if self.mobilecharger.components.mgl_mobilecharger:GetPower() > 0 and mgl_mapper_power < 91 and (self.mgl_mapper.components.equippable and not self.mgl_mapper.components.equippable:IsEquipped()) then
                 self.mgl_mapper.components.finiteuses:Repair(10)
                 self.mobilecharger.components.mgl_mobilecharger:Cost()
                 if self.mgl_mapper.FixFn ~= nil then
                     self.mgl_mapper:FixFn(self.inst)
                 end
+            end
+        end
+
+        if self.mgl_uav_item ~= nil and self.mgl_uav_item.components.finiteuses then --给无人机自动充电
+            if self.mobilecharger then
+                local mgl_uav_item_power = self.mgl_uav_item.components.finiteuses:GetUses()
+                if self.mobilecharger.components.mgl_mobilecharger:GetPower() > 0 and mgl_uav_item_power < 91 then
+                    self.mgl_uav_item.components.finiteuses:Repair(10)
+                    self.mobilecharger.components.mgl_mobilecharger:Cost()
+                end
+            end
+            if self.mgl_uav_item.components.finiteuses:GetUses() > 0 then
+                local power = self.mgl_uav_item.components.finiteuses:GetUses()
+                local cost = #self.follower * 0.04
+                if power >= cost then
+                    if self.module >= 2 then
+                        cost = cost * 0.75
+                    end
+                    self.mgl_uav_item.components.finiteuses:Use(cost)
+                else
+                    self.mgl_uav_item.components.finiteuses:SetUses(0)
+                end
+            end
+            if self.mgl_uav_item.components.finiteuses:GetUses() == 0 then
+                self:RemoveFollower()
             end
         end
 
@@ -208,36 +236,16 @@ function Mgl_System:ChangeUav(item)
         local type = self.uav_type or 1
         type = type + 1
         -- 获取下一个无人机类型
-        self.uav_type = type > maxNum and 1 or type
+        if self.d99_lock and type == maxNum+1 then
+            self.uav_type = 4
+        else
+            self.uav_type = type > maxNum and 1 or type
+        end
     end
     if self.mgl_uav_item then
         self.mgl_uav_item.components.inventoryitem:ChangeImageName("mgl_uav_" .. anim[self.uav_type])
         self.mgl_uav_item.components.inventoryitem.atlasname = ("images/inventoryimages/mgl_uav_" .. anim[self.uav_type] .. ".xml")
     end
-end
-
-function Mgl_System:RemoveUav()
-
-    if self.follower ~= nil then
-        for k, v in pairs(self.follower) do
-            if v and v:IsValid() then
-                --table.remove(self.follower, v)
-                for k = 1, v.components.inventory:NumItems() do
-                    local item = v.components.inventory:GetItemInSlot(k)
-                    if item and item.persists then
-                        v.components.inventory:DropItem(item, true, true)
-                        item.Transform:SetPosition(self.inst:GetPosition():Get())
-                    end
-                end
-                if v.sg then
-                    v.sg:GoToState("disappear")
-                else
-                    v:Remove()
-                end
-            end
-        end
-    end
-    self.follower = {} --重新读个表吧
 end
 
 function Mgl_System:RemoveFollower()
@@ -266,13 +274,16 @@ function Mgl_System:RemoveFollower()
 
     for _, v in pairs(values) do
         if v and v:IsValid() then
-            for k = 1, v.components.inventory:NumItems() do
-                local item = v.components.inventory:GetItemInSlot(k)
-                if item and item.persists then
-                    v.components.inventory:DropItem(item, true, true)
-                    item.Transform:SetPosition(self.inst:GetPosition():Get())
+            if self.uav_type == 4 then
+                for k = 1, v.components.inventory:NumItems() do
+                    local item = v.components.inventory:GetItemInSlot(k)
+                    if item and item.persists then
+                        v.components.inventory:DropItem(item, true, true)
+                        item.Transform:SetPosition(self.inst:GetPosition():Get())
+                    end
                 end
             end
+            v.attack = false
             if v.sg then
                 v.sg:GoToState("disappear")
             else
@@ -282,6 +293,13 @@ function Mgl_System:RemoveFollower()
     end
     self.follower = {} -- 最终清空表
 end
+
+local NOTAGS = { "playerghost", "INLIMBO", "flight", "invisible" }
+for k, v in pairs(FUELTYPE) do
+    table.insert(NOTAGS, v.."_fueled")
+end
+
+local FREEZETARGET_ONEOF_TAGS = { "heatrock", "freezable", "fire", "smolder" }
 
 function Mgl_System:CallUav()
     self.inst.components.talker:Say("正在召唤无人机")
@@ -299,11 +317,7 @@ function Mgl_System:CallUav()
         end
         if item.components.finiteuses:GetPercent() > 0.2 and not self.call_cd then
             self.call_cd = true
-            local time = {
-                [0] = 0,
-                [1] = 14,
-                [2] = 22
-            }
+
             local uav = SpawnPrefab("mgl_uav")
             local pt = self.inst:GetPosition()
             local theta = math.random() * 2 * PI
@@ -333,7 +347,7 @@ function Mgl_System:CallUav()
             if self.uav_type == 1 or self.uav_type == 2 or self.uav_type == 3 then
                 uav.attack = true
                 if self.uav_type == 2 then
-                    local moredamage = self.module >= 1 and 8 or 0
+                    local moredamage = self.module >= 1 and 9 or 0
                     uav:AddComponent("planardamage")
                     uav.components.combat.onhitotherfn = onhit
                     uav.components.combat:SetRange(1,2)
@@ -342,7 +356,7 @@ function Mgl_System:CallUav()
                     uav.components.combat:SetDefaultDamage((mode[mgl_level] + moredamage))
                     EquipWeapon(uav,"mgl_uav_lrbd_charge")
                 elseif self.uav_type == 3 then
-                    local moredamage = self.module >= 1 and 9 or 0
+                    local moredamage = self.module >= 1 and 15 or 0
                     uav.components.combat.onhitotherfn = onhitother
                     uav.components.combat:SetRange(6,12)
                     uav.components.combat:SetAttackPeriod(2.3) -- 攻击间隔
@@ -355,6 +369,29 @@ function Mgl_System:CallUav()
                     uav.components.combat:SetAttackPeriod(3)
                     uav.components.combat:SetRange(5,10)
                     uav.components.combat:SetDefaultDamage(0)
+                    if self.module >= 1 then
+                        --无人机附近的玩家不会过热
+                        uav._moudle_task = uav:DoPeriodicTask(1, function()
+                            local x, y, z = uav.Transform:GetWorldPosition()
+                            -- 寻找并处理领域内的实体
+                            for i, v in ipairs(TheSim:FindEntities(x, 0, z, 6, nil, NOTAGS, FREEZETARGET_ONEOF_TAGS)) do
+                                -- 检查实体是否有效且未死亡
+                                if v:IsValid() and not (v.components.health ~= nil and v.components.health:IsDead()) then
+                                    -- 如果实体可燃烧且不可燃，尝试将其熄灭
+                                    if v.components.burnable ~= nil and v.components.fueled == nil then
+                                        v.components.burnable:Extinguish()
+                                    end
+                                    -- 如果实体有温度组件，尝试降低实体的温度
+                                    if v.components.temperature ~= nil then
+                                        local newtemp = math.min(v.components.temperature:GetCurrent(), 65)
+                                        if newtemp < v.components.temperature:GetCurrent() then
+                                            v.components.temperature:SetTemperature(newtemp)
+                                        end
+                                    end
+                                end
+                            end
+                        end)
+                    end
                 end
 
             end
@@ -367,22 +404,6 @@ function Mgl_System:CallUav()
                     self.call_cd = false
                 end
             )
-
-            if time[mgl_level] > 0 then
-                uav:AddTag("nocost")
-                local fx = SpawnPrefab("mgl_fx")
-                fx.entity:SetParent(uav.entity)
-                fx.AnimState:PlayAnimation("fx3", true)
-                uav:DoTaskInTime(
-                    time[mgl_level],
-                    function()
-                        if uav and uav:IsValid() then
-                            uav:RemoveTag("nocost")
-                            fx:Remove()
-                        end
-                    end
-                )
-            end
         else
             if self.call_cd then
                 self.inst.components.talker:Say(STRINGS.MGL_SKILLCDING)
@@ -419,14 +440,27 @@ function Mgl_System:UseSkill()
     if self.mgl_uav_item  == nil then
         return
     end
+    
     if self.follower ~= nil and #self.follower > 0 and self.task == nil and self.mgl_uav_item.components.rechargeable:IsCharged() then
-
+        local uav_num = #self.follower or 0
+        if self.mgl_uav_item.components.finiteuses:GetUses() -1 <= (5 * uav_num) then
+            self.inst.components.talker:Say(STRINGS.MGL_POWER_LOW)
+            return
+        end
+        if self.module>= 2 then
+            self.mgl_uav_item.components.finiteuses:Use(5 * uav_num * 0.75)
+        else
+            self.mgl_uav_item.components.finiteuses:Use(5 * uav_num)
+        end
         local task = mission[self.uav_type]
         local cd = task.cd
         local mgl_level = self.inst.mgl_level:value() or 0
         local time = 0
         if type(task.cd) ~= "number" then
             cd = task.cd[mgl_level]
+        end
+        if self.uav_type == 4 and self.module >=1 then
+            cd = cd - 15
         end
 
         if self.uav_type == 1 then
@@ -435,13 +469,12 @@ function Mgl_System:UseSkill()
             end
         elseif self.uav_type == 2 then
             local min_attack_period = {
-                [0] = 0.5,
                 [1] = 0.5,
-                [2] = 0.25
+                [2] = 0.4
             }
             for k, v in pairs(self.follower) do
                 v.aoe = true
-                v.components.combat.min_attack_period = min_attack_period[mgl_level]
+                v.components.combat.min_attack_period = min_attack_period[mgl_level] or 0.5
             end
         elseif self.uav_type == 3 then
             for k, v in pairs(self.follower) do
@@ -490,11 +523,11 @@ end
 function Mgl_System:OnLoad(data)
     self.tool = data.tool or nil
     self.module = data.module or 0
-    self.uav_type = data.uav_type or 1
+    self.d99_lock = data.d99_lock or false
 end
 
 function Mgl_System:OnSave()
-    return { tool = self.tool, module = self.module, uav_type = self.uav_type }
+    return { tool = self.tool, module = self.module, uav_type = self.uav_type, d99_lock = self.d99_lock }
 end
 
 return Mgl_System

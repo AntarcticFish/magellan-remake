@@ -1,15 +1,14 @@
 local assets = {
-    Asset("ANIM", "anim/mgl_book.zip"),
-    Asset("ATLAS", "images/inventoryimages/mgl_book1.xml")
+    Asset("ANIM", "anim/mgl_module.zip"),
+    Asset("ATLAS", "images/inventoryimages/mgl_module1.xml")
 }
 
 local function useitem(inst, doer, item)
-    if doer and doer.components.mgl_level then
-        -- print("useitem book1 当前精英等级为:", doer.components.mgl_level:GetMglLevel())
-        if doer.components.mgl_level:GetMglLevel() == 0 then
-            doer.components.mgl_level:AddMglLevel(1)
+    if doer and doer.components.mgl_system then
+        if doer.components.mgl_system.module == 0 then
+            doer.components.mgl_system.module = 1
             inst:Remove()
-        elseif doer.components.mgl_level:GetMglLevel() > 0 then
+        elseif doer.components.mgl_system.module > 0 then
             doer.components.talker:Say(STRINGS.MGL_USEANOFF)
         end
     end
@@ -24,12 +23,11 @@ local function fn()
 
     MakeInventoryPhysics(inst)
 
-    inst.AnimState:SetBank("mgl_book")
-    inst.AnimState:SetBuild("mgl_book")
-    inst.AnimState:PlayAnimation("book1")
+    inst.AnimState:SetBank("mgl_module")
+    inst.AnimState:SetBuild("mgl_module")
+    inst.AnimState:PlayAnimation("mgl_module1")
 
     inst:AddTag("mgl_item")
-    inst:AddTag("book")
 
     inst.entity:SetPristine()
 
@@ -40,7 +38,7 @@ local function fn()
     inst:AddComponent("inspectable")
 
     inst:AddComponent("inventoryitem")
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/mgl_book1.xml"
+    inst.components.inventoryitem.atlasname = "images/inventoryimages/mgl_module1.xml"
 
     inst:AddComponent("mgl_itemfn")
     inst.components.mgl_itemfn:SetFunction(
@@ -52,4 +50,4 @@ local function fn()
     return inst
 end
 
-return Prefab("mgl_book1", fn, assets)
+return Prefab("mgl_module1", fn, assets)

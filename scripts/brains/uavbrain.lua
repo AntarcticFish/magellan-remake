@@ -132,7 +132,7 @@ local function FindEntityToWorkAction(inst, action, addtltags) --挖矿
     local target = FindEntity(inst, SEE_DIST,
         function(item) return item.components.workable and item.components.workable.action == action end)
 
-    print(inst, action, target)
+    -- print(inst, action, target)
     if target then
         return BufferedAction(inst, target, action)
     end
@@ -158,7 +158,7 @@ function Uav_Brain:OnStart()
             PriorityNode({
                 RunAway(self.inst, { fn = ShouldAvoidExplosive, tags = { "explosive" }, notags = { "INLIMBO" } },
                     AVOID_EXPLOSIVE_DIST, AVOID_EXPLOSIVE_DIST),
-
+                ChattyNode(self.inst, "SERVANT_PICKUP", DoAction(self.inst, PickUpAction, "Pick Up", true)),
                 WhileNode( --自动挖矿
                     function()
                         return not self.inst:HasTag("working") and self.inst.workable
@@ -177,10 +177,7 @@ function Uav_Brain:OnStart()
                     "AttackIfNotInCooldown",
                     ChaseAndAttack(self.inst, 3)
                 ),
-
-                ChattyNode(self.inst, "SERVANT_PICKUP", DoAction(self.inst, PickUpAction, "Pick Up", true)),
                 ChattyNode(self.inst, "SERVANT_PICK", DoAction(self.inst, PickGrassTwigs, "Pick Grass And Twigs", true)),
-
                 Follow(self.inst, GetLeader, MIN_FOLLOW_LEADER, TARGET_FOLLOW_LEADER, MAX_FOLLOW_LEADER, true),
                 FaceEntity(self.inst, GetLeader, GetLeader),
                 -- 随机漫游行为

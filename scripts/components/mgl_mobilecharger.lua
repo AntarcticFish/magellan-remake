@@ -40,7 +40,7 @@ end
 -- 填充燃料
 function Mgl_MobileCharger:Fill(prefabName)
     if prefabName == "log" then
-        print("添加燃料："..self.capacity)
+        -- print("添加燃料："..self.capacity)
         self.capacity = math.clamp(self.capacity + 1, 0, self.maxcapacity)
     end
 end

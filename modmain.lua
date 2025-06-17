@@ -29,6 +29,9 @@ PrefabFiles = {
 	"mgl_fx",
 	"mgl_uav_lrbd_charge",
 	"mgl_uav_armed_charge",
+	"mgl_d99",
+	"mgl_module1", 
+	"mgl_module2",
 }
 
 ---@type asset[]

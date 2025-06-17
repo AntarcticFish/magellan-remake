@@ -74,6 +74,22 @@ local data = {
 		},
 		filters = {'CHARACTER', 'MODS'}
 	},
+	{
+		recipe_name = 'mgl_d99',
+		ingredients = {
+			Ingredient("transistor", 5), 
+			Ingredient("purplegem", 1), 
+			Ingredient("goldnugget", 5), 
+			Ingredient("silk", 5)
+		},
+		tech = TECH.MAGIC_TWO,
+		config = {
+			builder_tag = 'mgl',
+			atlas = 'images/inventoryimages/mgl_d99.xml',
+			image = 'mgl_d99.tex',
+		},
+		filters = {'CHARACTER', 'MODS'}
+	}
 }
 
 ---@type data_destruction_recipes[]

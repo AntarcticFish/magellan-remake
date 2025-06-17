@@ -131,13 +131,9 @@ local function OnAttack(inst, doer)
     local level = owner.mgl_level:value()
     local module = mgl_system.module
     local itemlevel = inst.components.mgl_mapper.level
-    local moerdamage = itemlevel >= 1 and 5 or 0
+    local moerdamage = itemlevel >= 1 and 15 or 0
     inst.components.weapon:SetRange(weapon_data[level].range)
     inst.components.planardamage:SetBaseDamage(weapon_data[level].damage + moerdamage)
-
-    if module >= 2 then
-        inst.components.weapon:SetDamage(5)
-    end
 
     if inst.components.finiteuses:GetUses() <= 0 and owner then
         owner.AnimState:OverrideSymbol("swap_object", "swap_mgl_mapper", "broken")
@@ -245,7 +241,7 @@ local function ondeploy(inst, pt, deployer)
 end
 
 local function OnDismantle(inst, doer)
-    print(inst.components.mgl_item.userid, doer.userid)
+    -- print(inst.components.mgl_item.userid, doer.userid)
     if doer.components.mgl_system == nil or doer.userid ~= inst.components.mgl_item.userid then
         return
     end

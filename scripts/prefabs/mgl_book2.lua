@@ -5,7 +5,7 @@ local assets = {
 
 local function useitem(inst, doer, item)
     if doer and doer.components.mgl_level then
-        print("useitem book2 当前精英等级为:", doer.components.mgl_level:GetMglLevel())
+        -- print("useitem book2 当前精英等级为:", doer.components.mgl_level:GetMglLevel())
         if doer.components.mgl_level:GetMglLevel() == 1 then
             doer.components.mgl_level:AddMglLevel(1)
             inst:Remove()

@@ -46,7 +46,6 @@ AddStategraphState(
     }
 )
 
---By 爱丽丝猫猫，猜猜是哪只？
 AddStategraphState(
     "wilson",
     State {
