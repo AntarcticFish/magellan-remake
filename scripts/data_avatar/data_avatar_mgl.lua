@@ -116,7 +116,7 @@ local avatar_info = {
 		quotes = "\'Light Yume Raindrop\'",
 		survivability = "Strong",
 		-- desc
-		myname = 'My name is', -- avatar name
+		myname = 'Magellan', -- avatar name
 		others_desc_me = 'You are a good character', -- other people describe me
 		me_desc_another_me = '%s, are you another me?', -- describe another me
 	},
