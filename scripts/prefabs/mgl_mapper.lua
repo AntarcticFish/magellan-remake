@@ -338,6 +338,7 @@ local function fn()
     inst.components.weapon:SetProjectile("mgl_proj")
     inst.components.weapon:SetOnProjectileLaunch(function(inst, attacker, target)
         if attacker and attacker.entity then
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_icecamera")
             local castfx = SpawnPrefab("mgl_hit_fx")
             castfx.entity:SetParent(attacker.entity)
             castfx.Follower:FollowSymbol(attacker.GUID, "swap_object", -9.09978, 57, 0, true)

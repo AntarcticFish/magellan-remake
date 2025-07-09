@@ -36,7 +36,8 @@ PrefabFiles = {
 
 ---@type asset[]
 Assets = {
-
+	Asset("SOUNDPACKAGE", "sound/mgl_audio.fev"), 
+	Asset("SOUND", "sound/mgl_audio_bank01.fsb")
 }
 -- 导入mod配置
 for _,v in ipairs({

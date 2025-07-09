@@ -245,8 +245,14 @@ local states =
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("attack")
-
-            inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_nightsword")
+            if inst.uav_type == 3 then
+                inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavvolley")
+            elseif inst.uav_type == 2 then
+                inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavlaser")
+            elseif inst.uav_type == 1 then
+                inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze")
+            end
+            -- inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_nightsword")
 
             if inst.components.combat.target ~= nil and inst.components.combat.target:IsValid() then
                 inst:FacePoint(inst.components.combat.target.Transform:GetWorldPosition())

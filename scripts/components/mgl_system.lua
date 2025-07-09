@@ -109,9 +109,9 @@ end
 
 
 local function onhit(inst, target, damage, stimuli, weapon, damageresolved, spdamage, damageredirecttarget)
-    local leader = inst.components.follower.leader
     if target then
         if inst.aoe then
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavlaser_skill")
             --inst.components.combat:DoAreaAttack(data.target, 5.5, nil, nil, nil,
             --{ "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
             local x, y, z = inst.Transform:GetWorldPosition()
@@ -130,6 +130,7 @@ end
 
 local function onhitother(inst, target, damage, stimuli, weapon, damageresolved, spdamage, damageredirecttarget)
     if inst.aoe then
+        inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit_skill")
         local x, y, z = target.Transform:GetWorldPosition()
         local ents = TheSim:FindEntities(x, y, z, 3, nil,
             { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
@@ -139,6 +140,7 @@ local function onhitother(inst, target, damage, stimuli, weapon, damageresolved,
             end
         end
     elseif not inst.aoe then
+        inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit")
         local x, y, z = target.Transform:GetWorldPosition()
         local ents = TheSim:FindEntities(x, y, z, 2, nil,
             { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
@@ -284,6 +286,7 @@ function Mgl_System:RemoveFollower()
                 end
             end
             v.attack = false
+            v.SoundEmitter:PlaySound("mgl_audio/mgl_audio/uav_remove")
             if v.sg then
                 v.sg:GoToState("disappear")
             else
@@ -339,7 +342,7 @@ function Mgl_System:CallUav()
             if uav.sg then
                 uav.sg:GoToState("enter")
             end
-
+            uav.SoundEmitter:PlaySound("mgl_audio/mgl_audio/uav_call")
             if self.inst.components.inventory:EquipHasTag("mgl_mapper_item") then
                 uav.components.follower:SetLeader(self.inst)
             end
@@ -349,7 +352,7 @@ function Mgl_System:CallUav()
                 if self.uav_type == 2 then
                     local moredamage = self.module >= 1 and 9 or 0
                     uav:AddComponent("planardamage")
-                    uav.components.combat.onhitotherfn = onhit
+                    uav.components.combat.onhitotherfn = onhit 
                     uav.components.combat:SetRange(1,2)
                     uav.components.combat:SetAttackPeriod(1) -- 攻击间隔
                     uav.components.planardamage:SetBaseDamage(20)
@@ -462,7 +465,8 @@ function Mgl_System:UseSkill()
         if self.uav_type == 4 and self.module >=1 then
             cd = cd - 15
         end
-
+        self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_skill_start")
+        self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_voice_skill")
         if self.uav_type == 1 then
             for k, v in pairs(self.follower) do
                 v.skilltask = true

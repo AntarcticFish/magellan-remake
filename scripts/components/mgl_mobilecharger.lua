@@ -21,7 +21,7 @@ local Mgl_MobileCharger = Class(function(self, inst)
             self.inst.components.finiteuses:SetUses(self.power)
         end
         -- 有燃料时每5s消耗1个燃料并转化为对应的能量
-        if self.capacity > 0 and self.power < self.maxpower then
+        if self.capacity > 0 and self.power <= self.maxpower-10 then
             self.capacity = math.clamp(self.capacity - 1, 0, self.maxcapacity)
             AddPower(self, 1)
         end
