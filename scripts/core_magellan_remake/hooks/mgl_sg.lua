@@ -72,7 +72,7 @@ AddStategraphState(
             if equip ~= nil then --如果装备有武器
                 inst.AnimState:PlayAnimation("mapper_lag", false)
                 inst.AnimState:PushAnimation("mapper", false)
-                inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_weapon", nil, nil, true)
+                -- inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_weapon", nil, nil, true)
                 cooldown = math.max(cooldown, 13 * FRAMES)
             else
                 inst.AnimState:PlayAnimation("punch")
@@ -298,7 +298,7 @@ AddStategraphState(
                 if equip ~= nil then -- 如果装备有武器
                     inst.AnimState:PlayAnimation("mapper_lag")
                     inst.AnimState:PushAnimation("mapper", false)
-                    inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_weapon", nil, nil, true)
+                    -- inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_weapon", nil, nil, true)
                 else
                     inst.AnimState:PlayAnimation("punch")
                     inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_whoosh", nil, nil, true)
