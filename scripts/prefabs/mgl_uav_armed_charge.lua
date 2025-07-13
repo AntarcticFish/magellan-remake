@@ -92,7 +92,7 @@ local function fn()
     MakeInventoryPhysics(inst)
     RemovePhysicsColliders(inst)
 
-    inst:ForceFacePoint()
+    inst.Transform:SetEightFaced()
 
     inst.AnimState:SetBank("mgl_fx")
     inst.AnimState:SetBuild("mgl_fx")
