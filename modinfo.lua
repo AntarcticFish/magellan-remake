@@ -4,13 +4,9 @@ local op={{'A',97},{'B',98},{'C',99},{'D',100},{'E',101},{'F',102},{'G',103},{'H
 local modid = 'magellan_remake'
 local LANGS = {
     ['zh'] = {
-        name = '明日方舟麦哲伦 MOD',
+        name = '明日方舟 麦哲伦',
         description = '麦哲伦',
         config = {
-            -- {'设置的id','设置的名称','聚焦时显示的提示',默认值,{
-            --     {选项一,值},
-            --     {选项二,值}
-            -- }},
             {'语言'},
             {modid..'_lang','语言','语言','cn',{
                 {'简体中文','cn'},
@@ -21,30 +17,25 @@ local LANGS = {
             {modid..'_key_call_uav','召唤无人机按键','召唤无人机按键',122,op},
             {modid..'_key_mgl_skill','开启技能按键','开启技能按键',120,op},
             {modid..'_key_mgl_change_uav','切换无人机类型按键','切换无人机类型按键',103,op},
-            -- {modid..'_dmgmult','伤害倍率','调整伤害倍率',1,{
-            --     {'0.5倍',0.5},
-            --     {'1倍',1},
-            --     {'2倍',2}
-            -- }}
         }
     },
+    --英文
     ['en'] = {
-        name = 'magellan MOD',
-        description = 'magellan',
+        name = 'Arknights Magallan',
+        description = 'Magallan',
         config = {
-            {'LANGUAGE'},
-            {modid..'_lang','language','choose language','en',{
-                {'简体中文','cn'},
+            {'Language'},
+            {modid..'_lang','Language','Language','en',{
+                {'Simplified Chinese','cn'},
                 {'English','en'}
             }},
-            {'FUNCTIONS'},
-            -- {modid..'_dmgmult','Damage Mult','Damage Mult Settings',{
-            --     {'x0.5',0.5},
-            --     {'x1',1},
-            --     {'x2',2}
-            -- }}
+            {'Functions'},
+            {modid..'_key_light','Surveyor Light Toggle','Surveyor light on',118,op},
+            {modid..'_key_call_uav','UAV Summon Key','UAV summon key',122,op},
+            {modid..'_key_mgl_skill','Skill Activation Key','Skill activation key',120,op},
+            {modid..'_key_mgl_change_uav','UAV Type Switch Key','UAV type switch key',103,op},
         }
-    }
+    },
 }
 
 -- 决定当前用的语言
@@ -63,7 +54,11 @@ reign_of_giants_compatible = false -- 单机版：巨人国适配性
 all_clients_require_mod = true -- 服务端/所有端模组
 -- server_only_mod = true -- 仅服务端模组
 -- client_only_mod = true -- 仅客户端模组
-server_filter_tags = {} -- 创意工坊模组分类标签
+server_filter_tags = {
+    "明日方舟麦哲伦",
+    "明日方舟",
+    "麦哲伦",
+} -- 创意工坊模组分类标签
 icon_atlas = 'modicon.xml' -- 图集
 icon = 'modicon.tex' -- 图标
 

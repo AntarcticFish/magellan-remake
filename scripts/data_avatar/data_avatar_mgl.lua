@@ -98,10 +98,10 @@ TUNING[string.upper(avatar_name)..'_SANITY'] = 300
 local avatar_info = {
 	['cn'] = {
 		-- 选人界面的描述
-		titles = "明日方舟麦哲伦",
+		titles = "明日方舟 麦哲伦",
 		names = "麦哲伦",
-		descriptions = "",
-		quotes = "",
+		descriptions = "*来自远方的极地探险家。\n*与企鹅为伴的严寒适应者",
+		quotes = "你好呀！",
 		survivability = "探险",
 		-- 描述
 		myname = '麦哲伦', -- 角色名
@@ -109,16 +109,16 @@ local avatar_info = {
 		me_desc_another_me = '%s,你是世界上的另一个我嘛?', -- 自己描述自己
 	},
 	['en'] = {
-		-- select screen desc
-		titles = "Sakura Swordswoman",
-		names = "Niyu",
-		descriptions = "*Light Yume\n*Raindrop",
-		quotes = "\'Light Yume Raindrop\'",
-		survivability = "Strong",
-		-- desc
-		myname = 'Magellan', -- avatar name
-		others_desc_me = 'You are a good character', -- other people describe me
-		me_desc_another_me = '%s, are you another me?', -- describe another me
+		-- 选人界面的描述
+		titles = "Arknights Magallan",
+		names = "Magallan",
+		descriptions = "*A polar explorer from afar.\n*A cold-adapted survivor accompanied by penguins.",
+		quotes = "Hi!",
+		survivability = "Exploration",
+		-- 描述
+		myname = 'Magallan', -- Character name
+		others_desc_me = 'Where did you come from?', -- Others describe me
+		me_desc_another_me = '%s, are you the other me in the world?', -- Describe another self
 	},
 }
 

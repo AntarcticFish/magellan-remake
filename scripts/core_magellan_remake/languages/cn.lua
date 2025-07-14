@@ -4,7 +4,7 @@ STRINGS.MOD_MAGELLAN_REMAKE = {
         ACTION_COMMON_REPAIR = '修复',
     }
 }
-STRINGS.CHARACTERS.MGL = require "speech_mgl"
+STRINGS.CHARACTERS.MGL = require "speech_mgl_zh"
 
 STRINGS.MGL_USEANOFF = "已经使用过此物品了！"
 STRINGS.MGL_MUST_LEVEL = "需要先使用精一材料书！"

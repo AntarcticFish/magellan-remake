@@ -305,7 +305,7 @@ end
 local FREEZETARGET_ONEOF_TAGS = { "heatrock", "freezable", "fire", "smolder" }
 
 function Mgl_System:CallUav()
-    self.inst.components.talker:Say("正在召唤无人机")
+    -- self.inst.components.talker:Say("正在召唤无人机")
     if self.mgl_uav_item then
         local item = self.mgl_uav_item
 
