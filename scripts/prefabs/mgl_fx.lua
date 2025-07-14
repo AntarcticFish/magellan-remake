@@ -8,6 +8,7 @@ local function fn()
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
     inst.entity:AddNetwork()
+    inst.entity:AddFollower()
 
     inst:AddTag("FX")
 

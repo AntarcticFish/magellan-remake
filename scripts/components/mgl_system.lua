@@ -479,11 +479,25 @@ function Mgl_System:UseSkill()
             for k, v in pairs(self.follower) do
                 v.aoe = true
                 v.components.combat.min_attack_period = min_attack_period[mgl_level] or 0.5
+                if v and v.entity then
+                    local skillfx = SpawnPrefab("mgl_fx")
+                    skillfx.entity:SetParent(v.entity)
+                    skillfx.Follower:FollowSymbol(v.GUID, "wings", 0, 240, 0, true)
+                    skillfx.AnimState:PlayAnimation("uav_lrbd_fx",true)
+                    skillfx.AnimState:SetFinalOffset(3)
+                end
             end
         elseif self.uav_type == 3 then
             for k, v in pairs(self.follower) do
                 v.aoe = true
                 v.components.combat.damagemultiplier = 2.5
+                if v and v.entity then
+                    local skillfx = SpawnPrefab("mgl_fx")
+                    skillfx.entity:SetParent(v.entity)
+                    skillfx.Follower:FollowSymbol(v.GUID, "wings", 0, 250, 0, true)
+                    skillfx.AnimState:PlayAnimation("mgl_uav_66_fx",true)
+                    skillfx.AnimState:SetFinalOffset(3)
+                end
             end
         elseif self.uav_type == 4 then
             for k, v in pairs(self.follower) do
