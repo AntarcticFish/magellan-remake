@@ -46,13 +46,13 @@ local function Attack_Freezing(inst)
         if v._drone_f_debufftask ~= nil then
             return
         end
-        --添加命中特效,冰冻无人机
-        local fx = SpawnPrefab("mgl_fx")
-        fx.entity:SetParent(v.entity)
-        fx.AnimState:PlayAnimation("uav_r23_fx",true)
         if v ~= nil and v:IsValid() and v.components.locomotor ~= nil then
             -- 设置速度降低效果的数值
             v.components.locomotor:SetExternalSpeedMultiplier(v, debuffkey, speedmult)
+            --添加命中特效,冰冻无人机
+            local fx = SpawnPrefab("mgl_fx")
+            fx.entity:SetParent(v.entity)
+            fx.AnimState:PlayAnimation("uav_r23_fx",true)
             v._drone_f_debufftask = v:DoTaskInTime(
             debufftime, 
             function(i) 

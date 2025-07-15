@@ -64,6 +64,15 @@ STRINGS.MGL_UAV_IS_MAX = "UAV placement limit has been reached"
 STRINGS.MGL_POWER_LOW = "Low power!"
 STRINGS.MGL_SKILLCDING = "Skill is cooling down..."
 
+STRINGS.CHANGE_UAV_ERROR = "Drones are not empty! Cannot switch"
+
+STRINGS.CHANGE_UAV_SUCCESS = {
+    [1] = "Switched to R23 UAV",
+    [2] = "Switched to LRBD UAV",
+    [3] = "Switched to 66 UAV",
+    [4] = "Switched to YHLY UAV",
+}
+
 STRINGS.MGL_UAV = {
     [1] = "R23",
     [2] = "LRBD",

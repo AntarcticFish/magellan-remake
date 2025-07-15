@@ -65,6 +65,15 @@ STRINGS.MGL_UAV_IS_MAX = "无人机已达到放置上限"
 STRINGS.MGL_POWER_LOW = "电力不足！"
 STRINGS.MGL_SKILLCDING = "技能正在冷却当中..."
 
+STRINGS.CHANGE_UAV_ERROR = "无人机不为空！无法切换"
+
+STRINGS.CHANGE_UAV_SUCCESS = {
+    [1] = "已切换到R23型无人机",
+    [2] = "已切换到LRBD型无人机",
+    [3] = "已切换到66型无人机",
+    [4] = "已切换到YHLY型无人机",
+}
+
 STRINGS.MGL_UAV = {
     [1] = "R23",
     [2] = "LRBD",

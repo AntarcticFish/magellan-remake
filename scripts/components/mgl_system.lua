@@ -229,6 +229,7 @@ end
 
 function Mgl_System:ChangeUav(item)
     if self.follower ~= nil and #self.follower > 0 then
+        self.inst.components.talker:Say(STRINGS.CHANGE_UAV_ERROR)
         return
     end
 
@@ -243,6 +244,7 @@ function Mgl_System:ChangeUav(item)
         else
             self.uav_type = type > maxNum and 1 or type
         end
+        self.inst.components.talker:Say(STRINGS.CHANGE_UAV_SUCCESS[self.uav_type])
     end
     if self.mgl_uav_item then
         self.mgl_uav_item.components.inventoryitem:ChangeImageName("mgl_uav_" .. anim[self.uav_type])

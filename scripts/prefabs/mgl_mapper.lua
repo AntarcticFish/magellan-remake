@@ -14,16 +14,6 @@ local function PlayTurnOnSound(inst)
     end
 end
 
-local function fuelupdate(inst)
-    if inst._light ~= nil then
-        local fuelpercent = inst.components.finiteuses and inst.components.finiteuses:GetPercent() or
-            inst.components.fueled and inst.components.fueled:GetPercent()
-        inst._light.Light:SetIntensity(Lerp(.4, .6, fuelpercent))
-        inst._light.Light:SetRadius(Lerp(3, 5, fuelpercent))
-        inst._light.Light:SetFalloff(.9)
-    end
-end
-
 local function onremovelight(light)
     light._lantern._light = nil
 end
@@ -34,7 +24,9 @@ local function turnoff(inst)
         inst._light = nil
     end
 
-    inst.AnimState:Hide("glow")
+    if inst.mgl_fx ~= nil then
+        inst.mgl_fx.AnimState:Hide("glow")
+    end
 
     if inst._task ~= nil then
         inst._task:Cancel()
@@ -46,7 +38,27 @@ local function turnoff(inst)
     inst.SoundEmitter:KillSound("lp")
 end
 
+local function fuelupdate(inst)
+    if inst._light ~= nil then
+        local fuelpercent = inst.components.finiteuses and inst.components.finiteuses:GetPercent() or
+            inst.components.fueled and inst.components.fueled:GetPercent()
+
+        if fuelpercent < 0.1 then
+            turnoff(inst) -- 直接关闭灯光
+            return
+        end
+
+        inst._light.Light:SetIntensity(Lerp(.4, .6, fuelpercent))
+        inst._light.Light:SetRadius(Lerp(3, 5, fuelpercent))
+        inst._light.Light:SetFalloff(.9)
+    end
+end
+
 local function light_on(inst)
+    if not inst.components.fueled then
+        return
+    end
+
     if inst.components.fueled:GetPercent() > 0.1 then
         if inst._light == nil then
             inst._light = SpawnPrefab("lanternlight")
@@ -65,13 +77,21 @@ local function light_on(inst)
                 fuelupdate(inst)
             end)
         end
+        return
     end
+    turnoff(inst)
 end
 
 local function turnon(inst)
+    if inst.components.finiteuses == nil then
+        return
+    end
+    if inst.components.finiteuses:GetPercent() <= 0.1 then
+        turnoff(inst)
+        return
+    end
     if inst.components.finiteuses:GetUses() > 0 then
         local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
-
         if inst._light == nil then
             inst._light = SpawnPrefab("lanternlight")
             inst._light._lantern = inst
@@ -80,6 +100,7 @@ local function turnon(inst)
             PlayTurnOnSound(inst)
         end
         inst._light.entity:SetParent((owner or inst).entity)
+        inst.mgl_fx.AnimState:Show("glow")
         if owner ~= nil and inst.components.equippable:IsEquipped() then
             owner.AnimState:Show("LANTERN_OVERLAY")
         end
@@ -116,27 +137,29 @@ local weapon_data = {
 }
 
 local function OnAttack(inst, doer)
-    local owner = doer or inst.components.inventoryitem.owner or nil
-    if not owner then
+    local owner = doer or (inst.components.inventoryitem and inst.components.inventoryitem.owner) or nil
+    if not owner or not owner.components or not owner:HasTag("mgl") then 
         return
     end
 
-    if inst.components.finiteuses:GetUses() <= 0 then
+    if not inst.components.finiteuses then  -- **添加组件存在检查**
         return
     end
 
-    owner.components.combat.min_attack_period = 1.6
+    if owner.components.combat then  -- **添加组件存在检查**
+        owner.components.combat.min_attack_period = 1.6
+    end
 
-    local mgl_system = owner.components.mgl_system
-    local level = owner.mgl_level:value()
-    local module = mgl_system.module
-    local itemlevel = inst.components.mgl_mapper.level
-    local moerdamage = itemlevel >= 1 and 15 or 0
-    inst.components.weapon:SetRange(weapon_data[level].range)
-    inst.components.planardamage:SetBaseDamage(weapon_data[level].damage + moerdamage)
+    if owner.mgl_level and inst.components.mgl_mapper and inst.components.mgl_mapper.level then
+        local level = owner.mgl_level:value() or 0
+        local itemlevel = inst.components.mgl_mapper.level
+        local moerdamage = itemlevel >= 1 and 15 or 0
+        inst.components.weapon:SetRange(weapon_data[level].range)
+        inst.components.planardamage:SetBaseDamage(weapon_data[level].damage + moerdamage)
 
-    if inst.components.finiteuses:GetUses() <= 0 and owner then
-        owner.AnimState:OverrideSymbol("swap_object", "swap_mgl_mapper", "broken")
+        if inst.components.finiteuses:GetUses() <= 0 and owner then
+            owner.AnimState:OverrideSymbol("swap_object", "swap_mgl_mapper", "broken")
+        end
     end
 end
 
@@ -150,19 +173,17 @@ local function onequip(inst, owner)
     owner.AnimState:ClearOverrideSymbol("swap_object")
     owner.AnimState:Show("ARM_carry")
     owner.AnimState:Hide("ARM_normal")
+    local fx = SpawnPrefab("mgl_mapper_itemfx")
+    fx.entity:SetParent(owner.entity)
+    fx.Follower:FollowSymbol(owner.GUID, "swap_object", 0, 0, 0, true)
+    inst:ListenForEvent("unequipped", unequipped, fx)
+    inst.mgl_fx = fx
+
     turnon(inst)
     OnAttack(inst, owner)
 
     inst.components.inventoryitem.atlasname = "images/inventoryimages/mgl_mapper_item.xml"
     inst.components.inventoryitem:ChangeImageName("mgl_mapper_item")
-
-    local fx = SpawnPrefab("mgl_mapper_itemfx")
-    fx.entity:SetParent(owner.entity)
-    fx.Follower:FollowSymbol(owner.GUID, "swap_object", 0, 0, 0, true)
-
-    inst:ListenForEvent("unequipped", unequipped, fx)
-
-    owner.mgl_fx = fx
 end
 
 local function onunequip(inst, owner)
@@ -180,28 +201,28 @@ local function onunequip(inst, owner)
     end
 
     inst:RemoveEventCallback("unequipped", unequipped)
-    if owner.mgl_fx ~= nil then
-        owner.mgl_fx:Remove()
+    if inst.mgl_fx ~= nil then
+        inst.mgl_fx:Remove()
     end
 end
 
-local function spawnfxs(inst)
-    local pos = inst:GetPosition()
-    local x, y, z = TheWorld.Map:GetTileCenterPoint(pos:Get())
-    inst._fx = {}
+-- local function spawnfxs(inst)
+--     local pos = inst:GetPosition()
+--     local x, y, z = TheWorld.Map:GetTileCenterPoint(pos:Get())
+--     inst._fx = {}
 
-    for x1 = x - 6, x + 6, 0.5 do
-        for z1 = z - 6, z + 6, 0.5 do
-            local fx = SpawnAt("mgl_mapper_fx", Vector3(x1, y, z1), Vector3(0.5, 0.5, 0.5))
-            table.insert(inst._fx, fx)
-            fx:ListenForEvent("onremove", function()
-                if fx:IsValid() then
-                    fx:Remove()
-                end
-            end, inst)
-        end
-    end
-end
+--     for x1 = x - 6, x + 6, 0.5 do
+--         for z1 = z - 6, z + 6, 0.5 do
+--             local fx = SpawnAt("mgl_mapper_fx", Vector3(x1, y, z1), Vector3(0.5, 0.5, 0.5))
+--             table.insert(inst._fx, fx)
+--             fx:ListenForEvent("onremove", function()
+--                 if fx:IsValid() then
+--                     fx:Remove()
+--                 end
+--             end, inst)
+--         end
+--     end
+-- end
 
 local function OnFinished(inst)
     inst.components.weapon:SetRange(0)
@@ -215,17 +236,18 @@ local function ondeploy(inst, pt, deployer)
 
     deployer.components.mgl_system.tool = inst:GetSaveRecord()
     local pot = SpawnPrefab("mgl_mapper")
-    local x, y, z = TheWorld.Map:GetTileCenterPoint(deployer:GetPosition():Get())
+    -- local x, y, z = TheWorld.Map:GetTileCenterPoint(deployer:GetPosition():Get())
+    local x, y, z = TheWorld.Map:GetTileCenterPoint(pt:Get())
     pot.Transform:SetPosition(x, y, z)
     pot.AnimState:PlayAnimation("stand_place")
     pot.AnimState:PushAnimation("stand_idle", true)
 
     pot.components.mgl_mapper.level = inst.components.mgl_mapper.level
     pot.components.mgl_item.userid = deployer.userid
+    pot.components.fueled:SetPercent(inst.components.finiteuses:GetPercent())
 
     light_on(pot)
 
-    pot.components.fueled:SetPercent(inst.components.finiteuses:GetPercent())
     if pot.components.mgl_mapper.level >= 1 then
         pot.components.fueled.rate = 0.75
     else
@@ -241,7 +263,6 @@ local function ondeploy(inst, pt, deployer)
 end
 
 local function OnDismantle(inst, doer)
-    -- print(inst.components.mgl_item.userid, doer.userid)
     if doer.components.mgl_system == nil or doer.userid ~= inst.components.mgl_item.userid then
         return
     end
@@ -260,11 +281,11 @@ local function OnDismantle(inst, doer)
     turnoff(inst)
     turnoff(item)
 
-    if inst._fx then
-        for k, v in pairs(inst._fx) do
-            v:Remove()
-        end
-    end
+    -- if inst._fx then
+    --     for k, v in pairs(inst._fx) do
+    --         v:Remove()
+    --     end
+    -- end
 
     item.components.finiteuses:SetUses(inst.components.fueled:GetPercent() * 100)
 
@@ -296,7 +317,7 @@ local function fn()
 
     inst.AnimState:SetBank("swap_mgl_mapper")
     inst.AnimState:SetBuild("swap_mgl_mapper")
-    inst.AnimState:PlayAnimation("swap_loop")
+    inst.AnimState:PlayAnimation("idle",true)
 
     inst:AddTag("mgl_item")
     inst:AddTag("mgl_mapper")
@@ -333,7 +354,7 @@ local function fn()
 
     inst:AddComponent('weapon')
     inst.components.weapon:SetDamage(0)
-    inst.components.weapon:SetRange(5)
+    inst.components.weapon:SetRange(15)
     inst.components.weapon:SetOnAttack(UsePower)
     inst.components.weapon:SetProjectile("mgl_proj")
     inst.components.weapon:SetOnProjectileLaunch(function(inst, attacker, target)
@@ -414,12 +435,12 @@ local function build_fn()
     inst.components.fueled:SetTakeFuelFn(function()
         turnoff(inst)
     end)
-    light_on(inst)
+    -- light_on(inst)
 
     inst:AddComponent("portablestructure")
     inst.components.portablestructure:SetOnDismantleFn(OnDismantle)
 
-    inst:DoTaskInTime(0, spawnfxs)
+    -- inst:DoTaskInTime(0, spawnfxs)
 
     return inst
 end

@@ -6,6 +6,12 @@ local assets = {
     Asset("ATLAS", "images/inventoryimages/mgl_uav_yhly.xml"),
 }
 
+local function useitem(inst, doer, item)
+    if doer and doer.components.mgl_system then
+        doer.components.mgl_system:RemoveFollower()
+    end
+end
+
 local function fn()
     local inst = CreateEntity()
 
@@ -39,6 +45,11 @@ local function fn()
     inst:AddComponent("finiteuses")
     inst.components.finiteuses:SetMaxUses(100)
     inst.components.finiteuses:SetUses(100)
+
+    inst:AddComponent("mgl_itemfn")
+    inst.components.mgl_itemfn:SetFunction(
+        useitem
+    )
 
     MakeHauntableLaunch(inst)
 
