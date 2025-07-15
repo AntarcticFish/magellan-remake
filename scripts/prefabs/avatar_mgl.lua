@@ -64,8 +64,8 @@ end
 local function ShareTargetFn(dude)
     return dude:HasTag("penguin")
 end
-local MAX_TARGET_SHARES = 666
-local SHARE_TARGET_DIST = 20
+local MAX_TARGET_SHARES = 66
+local SHARE_TARGET_DIST = 30
 local function OnAttacked(inst, data)
     local attacker = data and data.attacker
     if attacker and inst.components.combat:CanTarget(attacker) then
