@@ -14,6 +14,12 @@ return { --台词
 		{
 			NORMAL = "Ahh~ this is bliss~",		-- 物品名:"火坑"->普通 制造描述:"一种更安全、更高效的营火。"
 		},
+        PENGUIN = {
+        "Goo goo ga ga!"  --企鸥
+        },
+        MUTATED_PENGUIN = {
+            GENERIC = "Goo goo ga ga!",  --月岩企鸥
+        },
     },
     BATTLECRY =
 	{
@@ -23,4 +29,5 @@ return { --台词
 	{
 		GENERIC = "Hehehe, just so you know, I'm very strong!",		
 	},
+
 }

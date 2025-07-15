@@ -60,12 +60,27 @@ local common_postinit = function(inst)
 	inst.uav_type:set(1)
 	inst.MiniMapEntity:SetIcon(avatar_name..'.tex')
 end
+
+local function ShareTargetFn(dude)
+    return dude:HasTag("penguin")
+end
+local MAX_TARGET_SHARES = 666
+local SHARE_TARGET_DIST = 20
+local function OnAttacked(inst, data)
+    local attacker = data and data.attacker
+    if attacker and inst.components.combat:CanTarget(attacker) then
+        inst.components.combat:ShareTarget(attacker, SHARE_TARGET_DIST, ShareTargetFn, MAX_TARGET_SHARES)
+    end
+end
 -- 主机
 local master_postinit = function(inst)	
 	inst.starting_inventory = start_inv[TheNet:GetServerGameMode()] or start_inv.default
 	inst.soundsname = 'wendy'
 
 	inst:AddComponent("mgl_system")
+
+	inst:AddTag("penguin")
+	inst:ListenForEvent("attacked", OnAttacked)
 	
 	-- 探索者：受到夜晚和疯狂光环的效果减弱 25%（类似温蒂）
 	inst.components.sanity.night_drain_mult = TUNING.WENDY_SANITY_MULT
