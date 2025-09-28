@@ -4,7 +4,7 @@ return { --台词
         PLAYER =
         {
             GENERIC = "In case I don't see you,good morning,good afternoon,good evening",	
-            ATTACKER = "Huh?",		
+            ATTACKER = "Mhm?",		
         },
         CAMPFIRE =
 		{
@@ -15,10 +15,10 @@ return { --台词
 			NORMAL = "Ahh~ this is bliss~",		-- 物品名:"火坑"->普通 制造描述:"一种更安全、更高效的营火。"
 		},
         PENGUIN = {
-        "Goo goo ga ga!"  --企鸥
+        "Gu gu ga ga!"  --企鸥
         },
         MUTATED_PENGUIN = {
-            GENERIC = "Goo goo ga ga!",  --月岩企鸥
+            GENERIC = "Gu gu ga ga!",  --月岩企鸥
         },
     },
     BATTLECRY =
@@ -27,7 +27,7 @@ return { --台词
 	},
 	COMBAT_QUIT =
 	{
-		GENERIC = "Hehehe, just so you know, I'm very strong!",		
+		GENERIC = "Hehe, just so you know, I'll be showing you true power!",		
 	},
 
 }

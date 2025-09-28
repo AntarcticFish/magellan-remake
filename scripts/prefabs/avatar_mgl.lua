@@ -39,11 +39,22 @@ local function onbecameghost(inst, data)
 		inst.components.mgl_system:RemoveFollower()
 	end
 end
+
+local function OnPlayerDespawn(inst, data)
+	if inst.components.mgl_system then
+		inst.components.mgl_system:RemoveFollower()
+	end
+end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 local function onload(inst,data)
 	inst:ListenForEvent('ms_respawnedfromghost', onbecamehuman)
 	inst:ListenForEvent('ms_becameghost', onbecameghost)
+	inst:ListenForEvent('player_despawn', OnPlayerDespawn)
+	--ms_playerdisconnected 
+	inst:ListenForEvent('ms_playerdisconnected', OnPlayerDespawn)
+	
+
 
 	if inst:HasTag('playerghost') then
 		onbecameghost(inst)

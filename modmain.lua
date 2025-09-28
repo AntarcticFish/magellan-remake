@@ -109,3 +109,29 @@ local files_hook = {
 for _,v in ipairs(files_hook) do
 	modimport('scripts/core_'..modid..'/hooks/'..v..'.lua')
 end
+
+--修改企鹅检查组件，当玩家检查企鹅时，播放语音
+local function AddPenguinInspectSound(prefab_name)
+	AddPrefabPostInit(prefab_name, function(inst)
+		if not TheWorld.ismastersim then
+			return
+		end
+		
+		-- 检查是否已经有 OnInspect 组件
+		local old_OnInspect = inst.components.inspectable.getstatus
+		if old_OnInspect then
+			inst.components.inspectable.getstatus = function(self, viewer)
+				-- 确保viewer是有效实体且具有SoundEmitter组件和mgl标签
+				if viewer and viewer:IsValid() and viewer.SoundEmitter and viewer:HasTag("mgl") then
+					viewer.SoundEmitter:PlaySound("mgl_audio/mgl_audio/gugugaga")
+				end
+				-- 调用原有的检查函数
+				return old_OnInspect(self, viewer)
+			end
+		end
+	end)
+end
+
+-- 添加普通企鹅和月岩企鹅的检查语音
+AddPenguinInspectSound("penguin") -- 普通企鹅
+AddPenguinInspectSound("mutated_penguin") -- 月岩企鹅

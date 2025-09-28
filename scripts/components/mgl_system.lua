@@ -257,7 +257,9 @@ function Mgl_System:RemoveFollower()
         self.task:Cancel()
         self.task = nil
     end
-
+    if self.fx21 ~= nil then
+        self.fx21:Remove()
+    end
     if self.fx ~= nil then
         if self.fx:IsValid() then
             self.fx.AnimState:PlayAnimation(fxanim[self.uav_type].pst)
@@ -349,6 +351,9 @@ function Mgl_System:CallUav()
                 uav.sg:GoToState("enter")
             end
             uav.SoundEmitter:PlaySound("mgl_audio/mgl_audio/uav_call")
+
+            uav.owner = self.inst
+
             if self.inst.components.inventory:EquipHasTag("mgl_mapper_item") then
                 uav.components.follower:SetLeader(self.inst)
             end
@@ -518,6 +523,7 @@ function Mgl_System:UseSkill()
         -- local x1, y1, z1 = inst.Transform:GetWorldPosition()
         fx21.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 0, 0)
         fx21.AnimState:PlayAnimation("fx21_loop",true)
+        self.fx21 = fx21
         
         local fx = SpawnPrefab("mgl_fx")
         fx.AnimState:SetFinalOffset(-1)
@@ -532,9 +538,6 @@ function Mgl_System:UseSkill()
         self.task = self.inst:DoPeriodicTask(1, function()
             time = time + 1
             if time >= task.tasktime then
-                if fx21 ~= nil then
-                    fx21:Remove()
-                end
                 self:RemoveFollower()
                 self.mgl_uav_item.components.rechargeable:Discharge(cd)
             end

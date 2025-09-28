@@ -177,6 +177,12 @@ local function fn()
     inst.IsWithinAttackRange = IsWithinAttackRange
     inst.persists = false
 
+    inst:DoPeriodicTask(1, function(inst)
+        if inst.owner == nil then
+            inst:Remove()
+        end
+    end)
+
     return inst
 end
 
