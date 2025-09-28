@@ -62,7 +62,7 @@ end
 function Mgl_MobileCharger:ChargerFuel()
     if self.chargerfuel == false then
         self.chargerfuel = true
-        self.maxcapacity = self.maxcapacity + 20
+        self.maxcapacity = 40
     end
 end
 

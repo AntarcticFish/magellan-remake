@@ -13,9 +13,9 @@ local Uav_Brain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
 end)
 
-local MIN_FOLLOW_LEADER = 0
+local MIN_FOLLOW_LEADER = 3
 local MAX_FOLLOW_LEADER = 10
-local TARGET_FOLLOW_LEADER = 7
+local TARGET_FOLLOW_LEADER = 5
 local AVOID_EXPLOSIVE_DIST = 5
 -- 定义无人机的徘徊时机变量，包括最小等待时间和随机等待时间的范围
 local WANDER_TIMING = {minwaittime = 6, randwaittime = 3}
@@ -31,7 +31,7 @@ local function ShouldAvoidExplosive(target)
 end
 
 local IsNear = 15
-local SEE_DIST = 25
+local SEE_DIST = 15
 
 local function CanWork(inst)
     return inst.components.follower.leader ~= nil and inst.workable
@@ -39,8 +39,8 @@ end
 
 local function FindTree(inst)
     local target = FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
-        return item.components.growable and item.components.growable:GetStage() == 3
-    end, { "tree", "CHOP_workable" })
+        return item.components.growable and item.components.growable:GetStage() >= 2
+    end, { "tree", "CHOP_workable"})
     if target ~= nil then
         inst.tree_target = target
     end
@@ -129,8 +129,14 @@ local function FindEntityToWorkAction(inst, action, addtltags) --挖矿
         return
     end
 
+    -- local target = FindEntity(inst, SEE_DIST,
+    --     function(item) return item.components.workable and item.components.workable.action == action end)
     local target = FindEntity(inst, SEE_DIST,
-        function(item) return item.components.workable and item.components.workable.action == action end)
+        function(item) return item.components.workable and item.components.workable.action == action end,
+        nil,
+        addtltags,
+        nil,
+        function(a, b) return a:GetDistanceSqToInst(inst) < b:GetDistanceSqToInst(inst) end)
 
     -- print(inst, action, target)
     if target then

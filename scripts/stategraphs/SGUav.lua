@@ -15,9 +15,6 @@ local function TryRepeatAction(inst, buffaction, right)
                 otheraction.target == buffaction.target and
                 otheraction.action == buffaction.action
             ) then
-            if inst.components.follower.leader and inst.components.follower.leader.components.mgl_system then
-                inst.components.follower.leader.components.mgl_system.mgl_uav_item.components.finiteuses:Use((40 * 480 * 0.005))
-            end
             inst.components.locomotor:Stop()
             inst:ClearBufferedAction()
             inst:PushBufferedAction(buffaction)
@@ -418,9 +415,6 @@ local states =
 
             inst.AnimState:PlayAnimation("attack")
 
-            if inst.components.follower.leader and inst.components.follower.leader.components.mgl_system then
-                inst.components.follower.leader.components.mgl_system.mgl_uav_item.components.finiteuses:Use((40 * 480 * 0.005))
-            end
         end,
 
         timeline =
@@ -465,9 +459,6 @@ local states =
 
             inst.AnimState:PlayAnimation("attack")
 
-            if inst.components.follower.leader and inst.components.follower.leader.components.mgl_system then
-                inst.components.follower.leader.components.mgl_system.mgl_uav_item.components.finiteuses:Use((40 * 480 * 0.005))
-            end
         end,
 
         timeline =

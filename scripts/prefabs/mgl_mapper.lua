@@ -100,7 +100,9 @@ local function turnon(inst)
             PlayTurnOnSound(inst)
         end
         inst._light.entity:SetParent((owner or inst).entity)
-        inst.mgl_fx.AnimState:Show("glow")
+        if inst.mgl_fx ~= nil then
+            inst.mgl_fx.AnimState:Show("glow")
+        end
         if owner ~= nil and inst.components.equippable:IsEquipped() then
             owner.AnimState:Show("LANTERN_OVERLAY")
         end

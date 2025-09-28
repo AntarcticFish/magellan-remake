@@ -279,21 +279,25 @@ function Mgl_System:RemoveFollower()
     for _, v in pairs(values) do
         if v and v:IsValid() then
             if self.uav_type == 4 then
-                for k = 1, v.components.inventory:NumItems() do
-                    local item = v.components.inventory:GetItemInSlot(k)
-                    if item and item.persists then
+                v.workable = false
+                for slot = 1, v.components.inventory:GetNumSlots() do
+                    local item = v.components.inventory:GetItemInSlot(slot)
+                    if item then
                         v.components.inventory:DropItem(item, true, true)
                         item.Transform:SetPosition(self.inst:GetPosition():Get())
                     end
                 end
             end
             v.attack = false
-            v.SoundEmitter:PlaySound("mgl_audio/mgl_audio/uav_remove")
-            if v.sg then
-                v.sg:GoToState("disappear")
-            else
-                v:Remove()
-            end
+            -- 延迟0.5秒后继续执行撤退逻辑
+            v:DoTaskInTime(0.5, function()
+                v.SoundEmitter:PlaySound("mgl_audio/mgl_audio/uav_remove")
+                if v.sg then
+                    v.sg:GoToState("disappear", true)
+                else
+                    v:Remove()
+                end
+            end)
         end
     end
     self.follower = {} -- 最终清空表
@@ -437,7 +441,7 @@ local mission = {
         },
         tasktime = 15 
     },
-    [4] = { cd = 30, tasktime = 15 },
+    [4] = { cd = 30, tasktime = 30 },
 }
 
 
