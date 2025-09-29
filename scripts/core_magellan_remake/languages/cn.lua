@@ -9,6 +9,7 @@ STRINGS.CHARACTERS.MGL = require "speech_mgl_zh"
 STRINGS.MGL_USEANOFF = "已经使用过此物品了！"
 STRINGS.MGL_MUST_LEVEL = "需要先使用精一材料书！"
 STRINGS.MGL_MUST_LEVEL2 = "需要先使用教学用龙腾无人机！"
+STRINGS.MGL_MUST_LEVEL_NEED = "需要达到精英化二阶"
 STRINGS.MGL_ITEM_FN = "使用物品"
 
 STRINGS.NAMES.MGL_BOOK1 = "精一材料书"

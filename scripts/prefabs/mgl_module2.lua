@@ -4,18 +4,22 @@ local assets = {
 }
 
 local function useitem(inst, doer, item)
-    if doer and doer.components.mgl_system then
-        if doer.components.mgl_system.module == 0 then
-            doer.components.talker:Say(STRINGS.MGL_MUST_LEVEL2)
-            return
-        elseif doer.components.mgl_system.module == 1 or doer.components.mgl_system.module == 2 then
-            local item = doer.components.mgl_system.mgl_mapper
-            if item and item.components.mgl_mapper then
-                item.components.mgl_mapper.level = 1
+    if doer and doer.components.mgl_level:GetMglLevel() ==2 then
+        if doer and doer.components.mgl_system then
+            if doer.components.mgl_system.module == 0 then
+                doer.components.talker:Say(STRINGS.MGL_MUST_LEVEL2)
+                return
+            elseif doer.components.mgl_system.module == 1 or doer.components.mgl_system.module == 2 then
+                local item = doer.components.mgl_system.mgl_mapper
+                if item and item.components.mgl_mapper then
+                    item.components.mgl_mapper.level = 1
+                end
+                doer.components.mgl_system.module = 2
+                inst:Remove()
             end
-            doer.components.mgl_system.module = 2
-            inst:Remove()
         end
+    else
+        doer.components.talker:Say(STRINGS.MGL_MUST_LEVEL_NEED)
     end
 end
 

@@ -10,6 +10,8 @@ STRINGS.CHARACTERS.MGL = require "speech_mgl_en"
 STRINGS.MGL_USEANOFF = "This item has already been used!"
 STRINGS.MGL_MUST_LEVEL = "You need to use the Elite 1 Promotion Book first!"
 STRINGS.MGL_MUST_LEVEL2 = "You need to use the Instructional Longteng UAV first!"
+--STRINGS.MGL_MUST_LEVEL_NEED = "需要达到精英化二阶"英文
+STRINGS.MGL_MUST_LEVEL_NEED = "You need to be at Elite level 2"
 STRINGS.MGL_ITEM_FN = "Use Item"
 
 STRINGS.NAMES.MGL_BOOK1 = "Elite 1 Promotion Book"
