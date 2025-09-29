@@ -38,7 +38,8 @@ local function Attack_Freezing(inst)
     local targets = TheSim:FindEntities(pos.x, pos.y, pos.z, 10, {"_combat"},
                                         {
         "noauradamage", "INLIMBO", "notarget", "flight",
-        "invisible", "playerghost", "player","companion"
+        "invisible", "playerghost", "player", "companion", "noattack", "uav", "wall",
+        "mount", "rider", "peacefulmount", "combatmount"
     }, nil)
     for k, v in pairs(targets) do
         -- 定义降低速度效果的标识

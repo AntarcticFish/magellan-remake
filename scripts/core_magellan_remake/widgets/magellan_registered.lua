@@ -4,6 +4,7 @@ AddClassPostConstruct(
         if self.owner and self.owner:HasTag("mgl") then
             local mgl_widget = require("core_magellan_remake/widgets/magellan_widgets")
             self.mgl_widget = self:AddChild(mgl_widget(self.owner))
+            self.mgl_widget:LoadPosition()
             self.mgl_widget:Show()
         end
 
