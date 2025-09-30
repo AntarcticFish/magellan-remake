@@ -73,6 +73,26 @@ local data = {
             return true
         end
     },
+    {
+        id = 'MGL_ITEM_FN_CASTSPELL',
+        str = STRINGS.MGL_ITEM_FN_CASTSPELL,
+        fn = function (act)
+            local item = act.invobject
+            if item.components.mgl_itemfn_castspell ~= nil then
+                item.components.mgl_itemfn_castspell:RunningFunction(act.doer)
+            end
+            return true
+        end,
+        state = 'castspell',
+        actiondata = {
+            priority = 5,
+        },
+        type = "INVENTORY",
+        component = 'mgl_itemfn_castspell',
+        testfn_type_INVENTORY = function (inst, doer, actions, right)
+            return true
+        end
+    },
 }
 
 ---@type data_componentaction_change[]

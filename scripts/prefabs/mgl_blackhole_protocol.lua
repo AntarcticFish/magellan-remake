@@ -199,8 +199,8 @@ local function fn()
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem.atlasname = "images/inventoryimages/mgl_blackhole_protocol.xml"
     
-    inst:AddComponent("mgl_itemfn")
-    inst.components.mgl_itemfn:SetFunction(OnUseItem)
+    inst:AddComponent("mgl_itemfn_castspell")
+    inst.components.mgl_itemfn_castspell:SetFunction(OnUseItem)
     
 
     MakeHauntableLaunch(inst)

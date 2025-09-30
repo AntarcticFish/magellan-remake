@@ -13,6 +13,7 @@ STRINGS.MGL_MUST_LEVEL2 = "You need to use the Instructional Longteng UAV first!
 --STRINGS.MGL_MUST_LEVEL_NEED = "需要达到精英化二阶"英文
 STRINGS.MGL_MUST_LEVEL_NEED = "You need to be at Elite level 2"
 STRINGS.MGL_ITEM_FN = "Use Item"
+STRINGS.MGL_ITEM_FN_CASTSPELL = "Cast Spell"
 
 STRINGS.NAMES.MGL_BOOK1 = "Elite 1 Promotion Book"
 STRINGS.CHARACTERS.GENERIC.DESCRIBE.MGL_BOOK1 = "What is this?"
