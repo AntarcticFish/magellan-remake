@@ -32,6 +32,7 @@ PrefabFiles = {
 	"mgl_d99",
 	"mgl_module1", 
 	"mgl_module2",
+	"mgl_blackhole_protocol",
 }
 
 ---@type asset[]

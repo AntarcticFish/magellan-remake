@@ -68,6 +68,12 @@ STRINGS.MGL_SKILLCDING = "Skill is cooling down..."
 
 STRINGS.CHANGE_UAV_ERROR = "Drones are not empty! Cannot switch"
 
+--黑洞协议
+STRINGS.NAMES.MGL_BLACKHOLE_PROTOCOL = "Black Hole Protocol"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.MGL_BLACKHOLE_PROTOCOL = "What is this?"
+STRINGS.CHARACTERS.MGL.DESCRIBE.MGL_BLACKHOLE_PROTOCOL = "Have you decided where to go? Stay rational!"
+STRINGS.RECIPE_DESC.MGL_BLACKHOLE_PROTOCOL = "Have you decided where to go? Stay rational!"
+
 STRINGS.CHANGE_UAV_SUCCESS = {
     [1] = "Switched to R23 UAV",
     [2] = "Switched to LRBD UAV",
