@@ -84,11 +84,26 @@ local function OnAttacked(inst, data)
     end
 end
 -- 主机
-local master_postinit = function(inst)	
+local master_postinit = function(inst)    
 	inst.starting_inventory = start_inv[TheNet:GetServerGameMode()] or start_inv.default
 	inst.soundsname = 'wendy'
 
 	inst:AddComponent("mgl_system")
+	
+	-- 检查是否启用黑洞协议设置
+	local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
+	if enable_blackhole then
+		if not inst.components.mgl_collapse_value and inst.components.sanity then
+			inst:AddComponent("mgl_collapse_value")
+			if inst.components.mgl_collapse_value then
+				inst.components.mgl_collapse_value:OnInit()
+			end
+		end
+	else
+		if inst.components.mgl_collapse_value then
+			inst.components.mgl_collapse_value:OnRemove()
+		end
+	end
 
 	inst:AddTag("penguin")
 	inst:ListenForEvent("attacked", OnAttacked)

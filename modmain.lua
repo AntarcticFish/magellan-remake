@@ -38,7 +38,8 @@ PrefabFiles = {
 ---@type asset[]
 Assets = {
 	Asset("SOUNDPACKAGE", "sound/mgl_audio.fev"), 
-	Asset("SOUND", "sound/mgl_audio_bank01.fsb")
+	Asset("SOUND", "sound/mgl_audio_bank01.fsb"),
+	Asset("ANIM", "anim/mgl_collapseui.zip")
 }
 -- 导入mod配置
 for _,v in ipairs({
@@ -47,7 +48,7 @@ for _,v in ipairs({
 	'_key_call_uav',
 	'_key_mgl_skill',
 	'_key_mgl_change_uav',
-
+	'_enable_blackhole_protocol'
 }) do TUNING[string.upper('CONFIG_'..modid..v)] = GetModConfigData(modid..v) end
 
 
@@ -100,6 +101,12 @@ modimport('scripts/core_'..modid..'/managers/build_data_transfer.lua') -- 功能
 -- 导入UI
 modimport "scripts/core_magellan_remake/widgets/magellan_registered.lua"
 -- 注册客机组件
+
+-- 只在黑洞协议开启时注册mgl_collapse_value组件
+local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
+if enable_blackhole then
+    AddReplicableComponent("mgl_collapse_value")
+end
 
 -- 导入钩子 It's my勾
 ---@type string[]

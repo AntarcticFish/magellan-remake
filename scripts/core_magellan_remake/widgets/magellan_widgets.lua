@@ -44,7 +44,7 @@ function mgl_widget:LoadPosition()
         if load_success and data and data ~= "" then
             local success, pos_data = RunInSandbox(data)
             if success and pos_data and pos_data.x and pos_data.y then
-                print("mgl_widget:LoadPosition加载",pos_data.x,pos_data.y)
+                -- print("mgl_widget:LoadPosition加载",pos_data.x,pos_data.y)
                 self:SetPosition(pos_data.x, pos_data.y, 0)        
             end
         end
@@ -55,7 +55,7 @@ function mgl_widget:SavePosition(x, y)
     local pos_data = {x = x, y = y}
     local str = DataDumper(pos_data, nil, true)
     TheSim:SetPersistentString("mgl_widget_position", str, false)
-    print("mgl_widget:SavePosition保存", str)
+    -- print("mgl_widget:SavePosition保存", str)
 end
 
 function mgl_widget:_OnControl(control, down)

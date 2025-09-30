@@ -17,6 +17,10 @@ local LANGS = {
             {modid..'_key_call_uav','召唤无人机按键','召唤无人机按键',122,op},
             {modid..'_key_mgl_skill','开启技能按键','开启技能按键',120,op},
             {modid..'_key_mgl_change_uav','切换无人机类型按键','切换无人机类型按键',114,op},
+            {modid..'_enable_blackhole_protocol','是否启用黑洞协议','是否启用黑洞协议',false,{
+                {'禁用',false},
+                {'启用',true}
+            }}
         }
     },
     --英文
@@ -34,6 +38,10 @@ local LANGS = {
             {modid..'_key_call_uav','UAV Summon Key','UAV summon key',122,op},
             {modid..'_key_mgl_skill','Skill Activation Key','Skill activation key',120,op},
             {modid..'_key_mgl_change_uav','UAV Type Switch Key','UAV type switch key',114,op},
+            {modid..'_enable_blackhole_protocol','Enable Blackhole Protocol','Enable blackhole protocol',false,{
+                {'Disabled',false},
+                {'Enabled',true}
+            }}
         }
     },
 }
