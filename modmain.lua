@@ -48,7 +48,7 @@ for _,v in ipairs({
 	'_key_call_uav',
 	'_key_mgl_skill',
 	'_key_mgl_change_uav',
-	'_enable_blackhole_protocol'
+	-- '_enable_blackhole_protocol'
 }) do TUNING[string.upper('CONFIG_'..modid..v)] = GetModConfigData(modid..v) end
 
 
@@ -68,7 +68,7 @@ modimport('scripts/core_'..modid..'/languages/'..TUNING[string.upper('CONFIG_'..
 modimport('scripts/data_avatar/data_avatar_mgl.lua')
 
 -- 导入调用器
--- modimport('scripts/core_'..modid..'/callers/caller_attackperiod.lua')
+modimport('scripts/core_'..modid..'/callers/caller_attackperiod.lua')
 -- modimport('scripts/core_'..modid..'/callers/caller_badge.lua')
 modimport('scripts/core_'..modid..'/callers/caller_ca.lua')
 modimport('scripts/core_'..modid..'/callers/caller_changeactionsg.lua')
@@ -88,7 +88,7 @@ modimport('scripts/core_'..modid..'/managers/mgl_item_undrop.lua')
 modimport('scripts/core_'..modid..'/managers/build_data_transfer.lua') -- 功能(需要填写): 制作物品过程涉及数据传输
 -- modimport('scripts/core_'..modid..'/managers/cantequip_whennodurability.lua') -- 功能(无需修改): 本文件用来管理,装备耐久用尽时的逻辑
 -- modimport('scripts/core_'..modid..'/managers/cd_in_itemtile.lua') -- 功能(无需修改): 在物品栏以数字形式显示的cd
--- modimport('scripts/core_'..modid..'/managers/dmg_sys.lua') -- 管理: 用这个文件管理伤害处理吧
+modimport('scripts/core_'..modid..'/managers/dmg_sys.lua') -- 管理: 用这个文件管理伤害处理吧
 -- modimport('scripts/core_'..modid..'/managers/event_hook.lua') -- 功能(需要填写): 勾 event
 -- modimport('scripts/core_'..modid..'/managers/invincible.lua') -- 功能(无需修改): 设置无敌的
 -- modimport('scripts/core_'..modid..'/managers/is_mod_enabled.lua') -- 功能(无需修改): 判断某个mod有没有开启 的前置
@@ -103,10 +103,10 @@ modimport "scripts/core_magellan_remake/widgets/magellan_registered.lua"
 -- 注册客机组件
 
 -- 只在黑洞协议开启时注册mgl_collapse_value组件
-local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
-if enable_blackhole then
-    AddReplicableComponent("mgl_collapse_value")
-end
+-- local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
+-- if enable_blackhole then
+--     AddReplicableComponent("mgl_collapse_value")
+-- end
 
 -- 导入钩子 It's my勾
 ---@type string[]

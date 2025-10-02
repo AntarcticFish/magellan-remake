@@ -162,30 +162,31 @@ function Uav_Brain:OnStart()
     local root = PriorityNode(
         {
             PriorityNode({
-                RunAway(self.inst, { fn = ShouldAvoidExplosive, tags = { "explosive" }, notags = { "INLIMBO" } },
-                    AVOID_EXPLOSIVE_DIST, AVOID_EXPLOSIVE_DIST),
-                ChattyNode(self.inst, "SERVANT_PICKUP", DoAction(self.inst, PickUpAction, "Pick Up", true)),
                 WhileNode( --自动挖矿
                     function()
                         return not self.inst:HasTag("working") and self.inst.workable
                     end,
                     "keep mining",
                     DoAction(self.inst, function() return FindEntityToWorkAction(self.inst, ACTIONS.MINE) end)),
-                ChattyNode(self.inst, "SERVANT_CHOP_TREE", DoAction(self.inst, DigStump, "Dig Stump", true)),
                 IfThenDoWhileNode(function() return StartChoppingCondition(self.inst) end,
                     function() return KeepChoppingAction(self.inst) end,
                     "Chop Tree",
                     LoopNode
                     { ChattyNode(self.inst, "SERVANT_CHOP_TREE", DoAction(self.inst, FindTreeToChopAction, "Pick Up", true)) }),
+                ChattyNode(self.inst, "SERVANT_CHOP_TREE", DoAction(self.inst, DigStump, "Dig Stump", true)),
+                ChattyNode(self.inst, "SERVANT_PICKUP", DoAction(self.inst, PickUpAction, "Pick Up", true)),
+                ChattyNode(self.inst, "SERVANT_PICK", DoAction(self.inst, PickGrassTwigs, "Pick Grass And Twigs", true)),
+
                 WhileNode(function()
                         return CanAttack(self.inst)
                     end,
                     "AttackIfNotInCooldown",
                     ChaseAndAttack(self.inst, 3)
                 ),
-                ChattyNode(self.inst, "SERVANT_PICK", DoAction(self.inst, PickGrassTwigs, "Pick Grass And Twigs", true)),
                 Follow(self.inst, GetLeader, MIN_FOLLOW_LEADER, TARGET_FOLLOW_LEADER, MAX_FOLLOW_LEADER, true),
                 FaceEntity(self.inst, GetLeader, GetLeader),
+                RunAway(self.inst, { fn = ShouldAvoidExplosive, tags = { "explosive" }, notags = { "INLIMBO" } },
+                AVOID_EXPLOSIVE_DIST, AVOID_EXPLOSIVE_DIST),
                 -- 随机漫游行为
                 Wander(self.inst, nil, nil, WANDER_TIMING)
             }, .25)

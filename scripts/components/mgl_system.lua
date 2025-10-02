@@ -272,6 +272,40 @@ function Mgl_System:RemoveFollower()
             end
         end
     end
+      
+    -- 技能结束后恢复原始攻速
+    if self.inst.components.combat and self.inst.components.combat.RemoveAtkPeriodModifier
+        and self.skill_atk_speed_source and self.skill_atk_speed_key then
+        self.inst.components.combat:RemoveAtkPeriodModifier(
+            self.skill_atk_speed_source, 
+            self.skill_atk_speed_key
+        )
+        -- 清理保存的状态
+        self.skill_atk_speed_source = nil
+        self.skill_atk_speed_key = nil
+        self.skill_atk_speed_mult = nil
+    end
+    
+    -- 技能结束后恢复原始伤害倍率
+    if self.inst.components.magellan_remake_dmg_modifier
+        and self.skill_dmg_source and self.skill_dmg_key then
+        self.inst.components.magellan_remake_dmg_modifier:RemoveModifierNormal(
+            "physical", 
+            "mult", 
+            self.skill_dmg_source, 
+            self.skill_dmg_key
+        )
+        -- 清理保存的状态
+        self.skill_dmg_source = nil
+        self.skill_dmg_key = nil
+        self.skill_dmg_mult = nil
+    end
+
+    -- 清理周期性减速任务
+    if self.skill_task_one then
+        self.skill_task_one:Cancel()
+        self.skill_task_one = nil
+    end
 
     local values = {}
     for _, v in pairs(self.follower) do
@@ -354,9 +388,10 @@ function Mgl_System:CallUav()
 
             uav.owner = self.inst
 
-            if self.inst.components.inventory:EquipHasTag("mgl_mapper_item") then
-                uav.components.follower:SetLeader(self.inst)
-            end
+            -- if self.inst.components.inventory:EquipHasTag("mgl_mapper_item") then
+            --     uav.components.follower:SetLeader(self.inst)
+            -- end
+            uav.components.follower:SetLeader(self.inst)
 
             if self.uav_type == 1 or self.uav_type == 2 or self.uav_type == 3 then
                 uav.attack = true
@@ -479,6 +514,57 @@ function Mgl_System:UseSkill()
         self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_skill_start")
         self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_voice_skill")
         if self.uav_type == 1 then
+            -- 每秒减速玩家周围的敌人
+            self.skill_task_one = self.inst:DoPeriodicTask(1,function()
+                self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze_skill")
+                if self.inst and self.inst:IsValid() then
+                    -- 获取玩家周围的敌人
+                    local x, y, z = self.inst.Transform:GetWorldPosition()
+                    local ents = TheSim:FindEntities(x, y, z, 10, {"_combat"},
+                                        {
+                        "noauradamage", "INLIMBO", "notarget", "flight",
+                        "invisible", "playerghost", "player", "companion", "noattack", "uav", "wall",
+                        "mount", "rider", "peacefulmount", "combatmount"
+                    }, nil)
+                    -- 对每个敌人施加减速效果
+                    for i, v in ipairs(ents) do
+                        if v ~= nil and v:IsValid() and v.components.locomotor ~= nil then
+                            -- 避免重复应用减速效果
+                            if v._mgl_slow_debufftask == nil then
+                                -- 应用减速效果
+                                v.components.locomotor:SetExternalSpeedMultiplier(
+                                    v, 
+                                    "mgl_skill_slow_debuff", 
+                                    0 -- 100%减速
+                                )
+                                
+                                -- 添加视觉效果
+                                local fx = SpawnPrefab("mgl_fx")
+                                fx.entity:SetParent(v.entity)
+                                fx.AnimState:PlayAnimation("uav_r23_fx", true)
+                                
+                                local debufftime  = 1.9 + 0.3 * mgl_level
+                                -- 设置定时器，在2秒后移除减速效果
+                                v._mgl_slow_debufftask = v:DoTaskInTime(
+                                    debufftime, 
+                                    function(target)
+                                        if target and target:IsValid() and target.components.locomotor then
+                                            target.components.locomotor:RemoveExternalSpeedMultiplier(
+                                                target, 
+                                                "mgl_skill_slow_debuff"
+                                            )
+                                        end
+                                        target._mgl_slow_debufftask = nil
+                                        if fx and fx:IsValid() then
+                                            fx:Remove()
+                                        end
+                                    end
+                                )
+                            end
+                        end
+                    end
+                end
+            end)
             for k, v in pairs(self.follower) do
                 v.skilltask = true
             end
@@ -487,6 +573,20 @@ function Mgl_System:UseSkill()
                 [1] = 0.5,
                 [2] = 0.4
             }
+            -- 为玩家添加临时攻速加成
+            if self.inst.components.combat and self.inst.components.combat.SetAtkPeriodModifier then
+                -- 保存原始攻速倍率，用于技能结束后恢复
+                self.skill_atk_speed_source = self.inst
+                self.skill_atk_speed_key = "mgl_skill_buff"
+                self.skill_atk_speed_mult = 0.8 / min_attack_period[mgl_level]  -- 攻速
+                
+                -- 设置攻速加成，参数分别是：来源、倍率、唯一标识
+                self.inst.components.combat:SetAtkPeriodModifier(
+                    self.skill_atk_speed_source, 
+                    self.skill_atk_speed_mult, 
+                    self.skill_atk_speed_key
+                )
+            end
             for k, v in pairs(self.follower) do
                 v.aoe = true
                 v.components.combat.min_attack_period = min_attack_period[mgl_level] or 0.5
@@ -499,6 +599,22 @@ function Mgl_System:UseSkill()
                 end
             end
         elseif self.uav_type == 3 then
+            -- 为玩家添加临时伤害倍率加成
+            if self.inst.components.magellan_remake_dmg_modifier then
+                -- 保存伤害倍率信息，用于技能结束后恢复
+                self.skill_dmg_source = self.inst
+                self.skill_dmg_key = "mgl_damage_buff"
+                self.skill_dmg_mult = 2.5 -- 伤害倍率
+                
+                -- 设置物理伤害乘算加成
+                self.inst.components.magellan_remake_dmg_modifier:ModifierNormal(
+                    "physical", 
+                    "mult", 
+                    self.skill_dmg_source, 
+                    self.skill_dmg_mult, 
+                    self.skill_dmg_key
+                )
+            end
             for k, v in pairs(self.follower) do
                 v.aoe = true
                 v.components.combat.damagemultiplier = 2.5
@@ -534,7 +650,6 @@ function Mgl_System:UseSkill()
         fx.AnimState:PushAnimation(fxanim[self.uav_type].loop, true)
         self.fx = fx
         
-
         self.task = self.inst:DoPeriodicTask(1, function()
             time = time + 1
             if time >= task.tasktime then

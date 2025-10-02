@@ -175,9 +175,6 @@ local function onequip(inst, owner)
     fx.Follower:FollowSymbol(owner.GUID, "swap_object", 0, 0, 0, true)
     inst:ListenForEvent("unequipped", unequipped, fx)
     inst.mgl_fx = fx
-    if owner.components.combat then  -- **添加组件存在检查**
-        owner.components.combat.min_attack_period = 1.6
-    end
     turnon(inst)
     OnAttack(inst, owner)
 
@@ -189,9 +186,6 @@ local function onunequip(inst, owner)
     owner.AnimState:Hide("ARM_carry")
     owner.AnimState:Show("ARM_normal")
     owner.AnimState:ClearOverrideSymbol("swap_object")
-    if owner.components.combat ~= nil then
-        owner.components.combat.min_attack_period = TUNING.WILSON_ATTACK_PERIOD
-    end
     if inst._task ~= nil then
         inst._task:Cancel()
         inst._task = nil
@@ -235,9 +229,8 @@ local function ondeploy(inst, pt, deployer)
 
     deployer.components.mgl_system.tool = inst:GetSaveRecord()
     local pot = SpawnPrefab("mgl_mapper")
-    -- local x, y, z = TheWorld.Map:GetTileCenterPoint(deployer:GetPosition():Get())
-    local x, y, z = TheWorld.Map:GetTileCenterPoint(pt:Get())
-    pot.Transform:SetPosition(x, y, z)
+    -- 直接使用鼠标点击的精确坐标，不再对齐到瓦片中心
+    pot.Transform:SetPosition(pt:Get())
     pot.AnimState:PlayAnimation("stand_place")
     pot.AnimState:PushAnimation("stand_idle", true)
 

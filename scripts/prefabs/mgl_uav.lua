@@ -57,7 +57,7 @@ local function Attack_Freezing(inst)
             v._drone_f_debufftask = v:DoTaskInTime(
             debufftime, 
             function(i) 
-                if v and v:IsValid() and v.components.locomotor then
+                if i and i:IsValid() and i.components.locomotor then
                     i.components.locomotor:RemoveExternalSpeedMultiplier(i, debuffkey) 
                 end
                 i._drone_f_debufftask = nil 
@@ -169,6 +169,12 @@ local function fn()
     inst.components.follower:KeepLeaderOnAttacked()
     inst.components.follower.keepdeadleader = true
     inst.components.follower.keepleaderduringminigame = true
+
+    -- 添加工作速度组件，提高挖掘速度
+    inst:AddComponent("workmultiplier")
+    inst.components.workmultiplier:AddMultiplier(ACTIONS.MINE, 5, inst)
+    inst.components.workmultiplier:AddMultiplier(ACTIONS.DIG, 5, inst)
+    inst.components.workmultiplier:AddMultiplier(ACTIONS.CHOP, 5, inst)
 
     inst:SetBrain(brains)
     inst:SetStateGraph("SGUav")

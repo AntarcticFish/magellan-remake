@@ -29,10 +29,11 @@ local data = {
         key = SUGAR_magellan_remake:getModConfigDataFromTUNING('_key_call_uav'),
         skill_template_type = 'none',
         fn = function(inst)
-            local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
-            if item and item:HasTag("mgl_mapper")then
-                inst.components.mgl_system:CallUav()
-            end
+            -- local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+            -- if item and item:HasTag("mgl_mapper")then
+            --     inst.components.mgl_system:CallUav()
+            -- end
+            inst.components.mgl_system:CallUav()
         end
     },
     -- 使用技能
@@ -44,10 +45,11 @@ local data = {
         key = SUGAR_magellan_remake:getModConfigDataFromTUNING('_key_mgl_skill'),
         skill_template_type = 'none',
         fn = function(inst)
-            local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
-            if item and item:HasTag("mgl_mapper") then
-                inst.components.mgl_system:UseSkill()
-            end
+            -- local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+            -- if item and item:HasTag("mgl_mapper") then
+            --     inst.components.mgl_system:UseSkill()
+            -- end
+            inst.components.mgl_system:UseSkill()
         end
     },
     -- 切换无人机
@@ -59,10 +61,11 @@ local data = {
         key = SUGAR_magellan_remake:getModConfigDataFromTUNING('_key_mgl_change_uav'),
         skill_template_type = 'none',
         fn = function(inst)
-            local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
-            if item and item:HasTag("mgl_mapper") then
-                inst.components.mgl_system:ChangeUav()
-            end
+            -- local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+            -- if item and item:HasTag("mgl_mapper") then
+            --     inst.components.mgl_system:ChangeUav()
+            -- end
+            inst.components.mgl_system:ChangeUav()
         end
     }
 }

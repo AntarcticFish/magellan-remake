@@ -3,7 +3,9 @@
 ---@type data_attackperiod
 local data = {
     avatar = {},
-    equippment = {},
+    equippment = {
+        mgl_mapper_item = 0.8 / 1.6,
+    },
 }
 
 return data

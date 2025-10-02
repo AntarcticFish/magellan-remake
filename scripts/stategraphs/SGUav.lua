@@ -259,42 +259,17 @@ local states =
         timeline =
         {
 
-            TimeEvent(4 * FRAMES, function(inst)
-                if inst:HasTag("Skill_X") then
-                    inst.components.combat:DoAttack(inst.sg.statemem.target)
-                    inst.sg:RemoveStateTag("abouttoattack")
-                end
-            end),
-
-            TimeEvent(5 * FRAMES, function(inst)
-                if inst:HasTag("Skill_X") then
-                    inst.sg:RemoveStateTag("busy")
-                end
-            end),
-
-            TimeEvent(6 * FRAMES, function(inst)
-                if inst:HasTag("Skill_X") then
-                    inst.sg:RemoveStateTag("attack")
-                end
-            end),
-            -----
             TimeEvent(8 * FRAMES, function(inst)
-                if not inst:HasTag("Skill_X") then
-                    inst.components.combat:DoAttack(inst.sg.statemem.target)
-                    inst.sg:RemoveStateTag("abouttoattack")
-                end
+                inst.components.combat:DoAttack(inst.sg.statemem.target)
+                inst.sg:RemoveStateTag("abouttoattack")
             end),
 
             TimeEvent(10 * FRAMES, function(inst)
-                if not inst:HasTag("Skill_X") then
-                    inst.sg:RemoveStateTag("busy")
-                end
+                inst.sg:RemoveStateTag("busy")
             end),
 
             TimeEvent(11 * FRAMES, function(inst)
-                if not inst:HasTag("Skill_X") then
-                    inst.sg:RemoveStateTag("attack")
-                end
+                inst.sg:RemoveStateTag("attack")
             end),
         },
 
