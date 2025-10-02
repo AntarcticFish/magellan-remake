@@ -515,7 +515,7 @@ function Mgl_System:UseSkill()
         self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_voice_skill")
         if self.uav_type == 1 then
             -- 每秒减速玩家周围的敌人
-            self.skill_task_one = self.inst:DoPeriodicTask(1,function()
+            self.skill_task_one = self.inst:DoPeriodicTask(3,function()
                 self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze_skill")
                 if self.inst and self.inst:IsValid() then
                     -- 获取玩家周围的敌人
@@ -544,7 +544,6 @@ function Mgl_System:UseSkill()
                                 fx.AnimState:PlayAnimation("uav_r23_fx", true)
                                 
                                 local debufftime  = 1.9 + 0.3 * mgl_level
-                                -- 设置定时器，在2秒后移除减速效果
                                 v._mgl_slow_debufftask = v:DoTaskInTime(
                                     debufftime, 
                                     function(target)
