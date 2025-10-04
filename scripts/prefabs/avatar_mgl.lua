@@ -67,6 +67,7 @@ end
 -- 主/客机
 local common_postinit = function(inst)
 	inst:AddTag(avatar_name)
+	inst:AddTag('sami_player')
 	inst.uav_type = net_smallbyte(inst.GUID, "uav_type")
 	inst.uav_type:set(1)
 	inst.MiniMapEntity:SetIcon(avatar_name..'.tex')
