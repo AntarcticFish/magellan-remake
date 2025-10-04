@@ -46,9 +46,9 @@ local data = {
 		recipe_name = 'mgl_book2',
 		ingredients = {
 			Ingredient("transistor", 8), 
-			Ingredient("glommerwings", 1), 
-			Ingredient("glommerfuel", 4), 
-			Ingredient("thulecite", 6)
+			Ingredient("gunpowder", 3), 
+			Ingredient("glommerfuel", 2), 
+			Ingredient("thulecite", 3)
 		},
 		tech = TECH.NONE,
 		config = {

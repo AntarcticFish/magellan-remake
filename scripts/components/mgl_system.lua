@@ -649,11 +649,11 @@ function Mgl_System:UseSkill()
         fx.AnimState:PushAnimation(fxanim[self.uav_type].loop, true)
         self.fx = fx
         
+        self.mgl_uav_item.components.rechargeable:Discharge(cd + task.tasktime)
         self.task = self.inst:DoPeriodicTask(1, function()
             time = time + 1
             if time >= task.tasktime then
                 self:RemoveFollower()
-                self.mgl_uav_item.components.rechargeable:Discharge(cd)
             end
         end)
     else

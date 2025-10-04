@@ -42,6 +42,14 @@ function Mgl_MobileCharger:Fill(prefabName)
     if prefabName == "log" then
         -- print("添加燃料："..self.capacity)
         self.capacity = math.clamp(self.capacity + 1, 0, self.maxcapacity)
+    elseif prefabName == "cutgrass" then
+        self.capacity = math.clamp(self.capacity + 1, 0, self.maxcapacity)
+    elseif prefabName == "charcoal" then
+        self.capacity = math.clamp(self.capacity + 2, 0, self.maxcapacity)
+    elseif prefabName == "nitre" then
+        self.capacity = math.clamp(self.capacity + 2, 0, self.maxcapacity)
+    elseif prefabName == "nightmarefuel" then
+        self.capacity = math.clamp(self.capacity + 5, 0, self.maxcapacity)
     end
 end
 

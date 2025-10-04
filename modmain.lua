@@ -97,6 +97,7 @@ modimport('scripts/core_'..modid..'/managers/dmg_sys.lua') -- 管理: 用这个�
 -- modimport('scripts/core_'..modid..'/managers/participate_kill.lua') -- 功能(无需修改): 联合击杀(参与击杀), 判断生物死亡时, 某个玩家有没有贡献伤害(参与战斗)
 -- modimport('scripts/core_'..modid..'/managers/quick_announce.lua') -- 功能(需要填写): alt + 左键点击库存物品宣告
 -- modimport('scripts/core_'..modid..'/managers/sort_recipes.lua') -- 功能(需要填写): 给配方排序
+modimport('scripts/core_'..modid..'/managers/mgl_monkey_curse_immunity.lua') -- 猴子诅咒免疫功能
 
 
 -- 导入UI
