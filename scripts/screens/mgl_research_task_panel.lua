@@ -1,9 +1,12 @@
-local Screen = require "widgets/screen" -- 引入"widgets/screen"模块
 local Widget = require "widgets/widget"
 local Image = require "widgets/image"
 local ImageButton = require "widgets/imagebutton"
 local Text = require "widgets/text"
 local TEMPLATES = require "widgets/redux/templates"
+local Screen = require "widgets/screen" -- 引入Screen类
+
+-- 导入任务数据
+local task_data = require "core_magellan_remake/data/mgl_task_data"
 
 local MglResearchTaskPanel = Class(Screen, function(self, owner)
     Screen._ctor(self, "mgl_research_task_panel")
@@ -107,7 +110,6 @@ local function ApplyDataToTaskItem(context, widget, data, index)
             if panel and panel.UpdateTaskDetail then
                 panel:UpdateTaskDetail(data)
             end
-            print("Task clicked:", data.title)
         end
     end
 end
@@ -163,10 +165,16 @@ function MglResearchTaskPanel:CreateTaskDetailUI()
     self.submit_button:SetPosition(0, -120, 0)
     self.submit_button:SetTextSize(26)
     self.submit_button:SetText("提交任务")
-    self.submit_button.text:SetColour(1, 0.84, 0, 1) -- 金色
+    self.submit_button.text:SetColour(1, 1, 1, 1) -- 统一白色字体
     self.submit_button:SetOnClick(function()
-        -- 提交任务功能，暂时只打印信息
-        print("提交任务按钮被点击")
+        -- 提交任务功能：使用RPC请求服务器提交任务
+        if ThePlayer and self.current_task then
+            -- print("客户端发送任务提交RPC请求:", self.current_task.id)
+            -- 通过replica组件调用RPC方法
+            if ThePlayer.replica and ThePlayer.replica.mgl_task_system then
+                ThePlayer.replica.mgl_task_system:RPCSubmitTask(self.current_task.id)
+            end
+        end
     end)
     
     -- 默认禁用提交按钮
@@ -184,12 +192,43 @@ function MglResearchTaskPanel:UpdateTaskDetail(task_data)
         return
     end
     
+    -- 保存当前选中的任务
+    self.current_task = task_data
+    
     -- 更新任务详情
     self.detail_title:SetString(task_data.title)
     
     -- 设置任务要求
     if task_data.requirement then
-        self.requirement_text:SetString(task_data.requirement)
+        -- 基础要求文本
+        local requirement_text = task_data.requirement
+        
+        -- 始终使用replica组件访问任务系统数据
+    local task_system = ThePlayer and ThePlayer.replica and ThePlayer.replica.mgl_task_system
+        
+        -- 如果任务有物品提交要求，添加当前拥有数量显示
+        if task_data.required_items and #task_data.required_items > 0 and task_system then
+            requirement_text = requirement_text .. "\n\n需要物品："
+            for i, item_req in ipairs(task_data.required_items) do
+                -- 获取玩家拥有的物品数量
+                local current_count = task_system:GetItemCount(ThePlayer, item_req.item)
+                
+                -- 获取物品的显示名称
+                local item_display_name = STRINGS.NAMES[string.upper(item_req.item)] or item_req.item
+                
+                -- 显示格式：[数量/所需] 物品名称
+                local item_line = string.format("%d/%d %s", current_count, item_req.amount, item_display_name)
+                
+                -- 如果不是最后一个物品，添加换行
+                if i < #task_data.required_items then
+                    item_line = item_line .. "\n"
+                end
+                
+                requirement_text = requirement_text .. item_line
+            end
+        end
+        
+        self.requirement_text:SetString(requirement_text)
     else
         self.requirement_text:SetString("暂无详细要求")
     end
@@ -201,36 +240,39 @@ function MglResearchTaskPanel:UpdateTaskDetail(task_data)
         self.reward_text:SetString("暂无奖励信息")
     end
     
-    -- 根据任务完成状态启用或禁用提交按钮
-    if task_data.completed then
-        self.submit_button:Enable()
-        self.submit_button.text:SetColour(0, 1, 0, 1) -- 绿色
+    -- 检查玩家是否满足任务要求
+    local can_submit = false
+    
+    -- 始终使用replica组件访问任务系统数据
+    local task_system = ThePlayer and ThePlayer.replica and ThePlayer.replica.mgl_task_system
+
+    
+    if task_system then
+        -- 先检查任务是否已完成
+        if task_data.completed then
+            -- 任务已完成，禁用提交按钮
+            self.submit_button:Disable()
+        else
+            -- 任务未完成，检查是否满足要求
+            can_submit = task_system:CheckTaskRequirements(ThePlayer, task_data.id)
+            if can_submit then
+                self.submit_button:Enable()
+            else
+                self.submit_button:Disable()
+            end
+        end
+        -- 始终保持白色字体
+        self.submit_button.text:SetColour(1, 1, 1, 1)
     else
+        -- 如果无法访问任务系统，默认禁用按钮
         self.submit_button:Disable()
-        self.submit_button.text:SetColour(1, 0.84, 0, 1) -- 金色
     end
 end
 
 -- 创建任务滚动列表
 function MglResearchTaskPanel:CreateTaskList()
-    -- 测试任务数据，增加数量以确保可以滚动，并添加详细信息
-    self.test_tasks = {
-        {title = "收集5个木材", completed = false, requirement = "在森林中收集5个木材", reward = "50点科技点数"},
-        {title = "制作科学机器", completed = true, requirement = "使用1个黄金、4个木材和4个石头制作科学机器", reward = "解锁基础科技配方"},
-        {title = "研究新科技", completed = false, requirement = "使用科学机器研究至少3个新配方", reward = "100点科技点数"},
-        {title = "击败蜘蛛女王", completed = false, requirement = "找到并击败蜘蛛女王", reward = "获得女王的冠冕"},
-        {title = "探索洞穴", completed = true, requirement = "找到并进入地下洞穴", reward = "解锁洞穴探索相关科技"},
-        {title = "制作二本科技", completed = false, requirement = "使用4个木板、2个石砖和4个黄金制作炼金引擎", reward = "解锁高级科技配方"},
-        {title = "收集10个石头", completed = false, requirement = "在地面收集10个石头", reward = "30点科技点数"},
-        {title = "种植浆果丛", completed = true, requirement = "种植至少3个浆果丛", reward = "稳定的食物来源"},
-        {title = "制作避雷针", completed = false, requirement = "使用3个黄金制作避雷针", reward = "保护基地免受雷击"},
-        {title = "制作背包", completed = true, requirement = "使用4个蜘蛛网和4个树枝制作背包", reward = "增加12格物品栏空间"},
-        {title = "收集20个草", completed = false, requirement = "在草原收集20个草", reward = "20点科技点数"},
-        {title = "制作木甲", completed = false, requirement = "使用8个木材制作木甲", reward = "提供基础物理防御"},
-        {title = "击败巨鹿", completed = false, requirement = "在冬天找到并击败巨鹿", reward = "获得巨鹿的眼球"},
-        {title = "制作火坑", completed = true, requirement = "使用3个石头、2个木材和3个草制作火坑", reward = "提供温暖和光源"},
-        {title = "收集3个黄金", completed = false, requirement = "通过挖矿收集3个黄金", reward = "70点科技点数"},
-    }
+    -- 初始化任务列表
+    self:RefreshTasksList()
     
     -- 创建滚动列表 - 移到右侧选项栏
     local widget_width = 200
@@ -238,7 +280,7 @@ function MglResearchTaskPanel:CreateTaskList()
     local num_visible_rows = 10
     
     self.task_scroll_list = self.right_bar:AddChild(TEMPLATES.ScrollingGrid(
-        self.test_tasks,
+        self.tasks,
         {
             context = {},
             widget_width = widget_width,
@@ -260,15 +302,151 @@ function MglResearchTaskPanel:CreateTaskList()
     
     -- 设置滚动列表位置
     self.task_scroll_list:SetPosition(0, 0)
+    
+    -- 添加任务状态变化事件监听器
+    self:AddTaskStatusListeners()
 end
 
+-- 刷新任务列表
+function MglResearchTaskPanel:RefreshTasksList()
+    -- 基础任务数据
+    self.tasks = shallowcopy(task_data)
+    
+    -- 始终使用replica组件访问任务系统数据
+    local task_system = ThePlayer and ThePlayer.replica and ThePlayer.replica.mgl_task_system
+    
+    -- 如果有任务系统组件，使用它获取任务状态
+    if task_system then
+        local all_tasks = task_system:GetAllTasks()
+        if all_tasks then
+            self.tasks = all_tasks
+        end
+    end
+end
+
+-- 添加任务状态变化事件监听器
+function MglResearchTaskPanel:AddTaskStatusListeners()
+    -- 移除之前的监听器（如果有）
+    self:RemoveTaskStatusListeners()
+    
+    if ThePlayer then
+        -- 监听任务状态变化事件
+        self.task_status_listener = ThePlayer:ListenForEvent("task_status", function(inst, data) self:OnTaskStatusChanged(data) end)
+        
+        -- 在客户端上，还需要监听replica组件的网络变量变化
+        if not TheWorld.ismastersim then
+            self.task_status_changed_listener = ThePlayer:ListenForEvent("task_status_changed", function(inst, data) 
+                -- 当网络变量变化时，我们不直接传入数据，而是让OnTaskStatusChanged自己通过RefreshTasksList获取最新数据
+                self:OnTaskStatusChanged() 
+            end)
+        end
+    end
+end
+
+-- 移除任务状态变化事件监听器
+function MglResearchTaskPanel:RemoveTaskStatusListeners()
+    if ThePlayer then
+        if self.task_status_listener then
+            ThePlayer:RemoveEventCallback("task_status", self.task_status_listener)
+            self.task_status_listener = nil
+        end
+        
+        if self.task_status_changed_listener then
+            ThePlayer:RemoveEventCallback("task_status_changed", self.task_status_changed_listener)
+            self.task_status_changed_listener = nil
+        end
+    end
+end
+
+-- 任务状态变化时的回调
+function MglResearchTaskPanel:OnTaskStatusChanged(data)
+    -- 参数data是可选的，我们始终刷新任务列表获取最新数据
+    self:RefreshTasksList()
+    
+    -- 更新滚动列表
+    if self.task_scroll_list then
+        self.task_scroll_list:SetItemsData(self.tasks)
+        -- 强制刷新UI显示，确保状态图标正确更新
+        self.task_scroll_list:RefreshView()
+    end
+    
+    -- 如果当前有选中的任务，更新其状态
+    if self.current_task then
+        -- 在更新后的任务列表中查找当前选中的任务
+        local updated_task = nil
+        for i, task in ipairs(self.tasks) do
+            if task.id == self.current_task.id then
+                updated_task = task
+                break
+            end
+        end
+        
+        if updated_task then
+            self:UpdateTaskDetail(updated_task)
+        end
+    end
+end
+
+
+
+-- 更新所有任务状态
+function MglResearchTaskPanel:UpdateAllTasksStatus()
+    -- 刷新任务列表
+    self:RefreshTasksList()
+    
+    -- 更新滚动列表
+    if self.task_scroll_list then
+        self.task_scroll_list:SetItemsData(self.tasks)
+    end
+end
+
+-- 关闭面板
 function MglResearchTaskPanel:Close()
+    -- 移除事件监听器
+    self:RemoveTaskStatusListeners()
+    
+    -- 移除任务完成事件监听器
+    if self.task_completed_listener and ThePlayer then
+            ThePlayer:RemoveEventCallback("mgl_task_completed", self.task_completed_listener)
+            self.task_completed_listener = nil
+        end
+    
+    -- 清除任务完成音效
+    if self.task_complete_sound_playing then
+        TheFrontEnd:GetSound():KillSound(self.task_complete_sound_playing)
+        self.task_complete_sound_playing = nil
+    end
+    
+    -- 使用标准的屏幕关闭方法
     TheFrontEnd:PopScreen(self)
 end
 
--- 初始化函数，创建任务详情UI
+-- 初始化函数
 function MglResearchTaskPanel:OnShow()
-    self:CreateTaskDetailUI()
+    -- 不要在这里再次创建任务详情UI，因为在构造函数中已经创建过了
+    -- 刷新任务列表
+    self:RefreshTasksList()
+    
+    -- 如果有选中的任务，更新其状态
+    if self.current_task then
+        self:UpdateTaskDetail(self.current_task)
+    else
+        -- 如果没有选中的任务，自动选择第一个任务
+        if #self.tasks > 0 then
+            self.current_task = self.tasks[1]
+            self:UpdateTaskDetail(self.current_task)
+        end
+    end
+    
+end
+
+-- 清理函数
+function MglResearchTaskPanel:OnHide()
+    -- 移除事件监听器
+    self:RemoveTaskStatusListeners()
+    
+    -- 调用父类的OnHide
+    Screen.OnHide(self)
 end
 
 return MglResearchTaskPanel

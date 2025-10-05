@@ -90,6 +90,8 @@ local master_postinit = function(inst)
 	inst.soundsname = 'wendy'
 
 	inst:AddComponent("mgl_system")
+	--添加任务系统UI组件
+	inst:AddComponent("mgl_task_system")
 	
 	-- 检查是否启用黑洞协议设置
 	-- local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
