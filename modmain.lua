@@ -104,8 +104,8 @@ modimport('scripts/core_'..modid..'/managers/mgl_monkey_curse_immunity.lua') -- 
 modimport "scripts/core_magellan_remake/widgets/magellan_registered.lua"
 -- 注册客机组件
 -- 注册任务系统组件为可复制组件
---添加任务系统UI组件
-AddReplicableComponent("mgl_task_system")
+--任务系统开关
+-- AddReplicableComponent("mgl_task_system")
 
 -- 只在黑洞协议开启时注册mgl_collapse_value组件
 -- local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
@@ -149,21 +149,21 @@ end
 AddPenguinInspectSound("penguin") -- 普通企鹅
 AddPenguinInspectSound("mutated_penguin") -- 月岩企鹅
 
---任务系统组件
--- 注册RPC函数，用于客户端提交任务
-AddModRPCHandler("magellan_remake", "SubmitTask", function(player, task_id)
-    -- print("服务器接收到RPC任务提交请求，任务ID:", task_id, "玩家:", player)
-    -- 检查玩家实体和任务系统组件是否存在
-    if player and player:IsValid() and player.components and player.components.mgl_task_system then
-        -- print("玩家实体上存在任务系统组件，正在提交任务")
-        player.components.mgl_task_system:SubmitTask(player, task_id)
-    end
-end)
---任务系统组件
--- 注册RPC函数，用于客户端购买商店物品
-AddModRPCHandler("magellan_remake", "BuyShopItem", function(player, item_id)
-    -- 检查玩家实体和任务系统组件是否存在
-    if player and player:IsValid() and player.components and player.components.mgl_task_system then
-        player.components.mgl_task_system:BuyShopItem(player, item_id)
-    end
-end)
+-- --任务系统开关
+-- -- 注册RPC函数，用于客户端提交任务
+-- AddModRPCHandler("magellan_remake", "SubmitTask", function(player, task_id)
+--     -- print("服务器接收到RPC任务提交请求，任务ID:", task_id, "玩家:", player)
+--     -- 检查玩家实体和任务系统组件是否存在
+--     if player and player:IsValid() and player.components and player.components.mgl_task_system then
+--         -- print("玩家实体上存在任务系统组件，正在提交任务")
+--         player.components.mgl_task_system:SubmitTask(player, task_id)
+--     end
+-- end)
+-- --任务系统开关
+-- -- 注册RPC函数，用于客户端购买商店物品
+-- AddModRPCHandler("magellan_remake", "BuyShopItem", function(player, item_id)
+--     -- 检查玩家实体和任务系统组件是否存在
+--     if player and player:IsValid() and player.components and player.components.mgl_task_system then
+--         player.components.mgl_task_system:BuyShopItem(player, item_id)
+--     end
+-- end)

@@ -109,46 +109,34 @@ end
 
 
 local function onhit(inst, target, damage, stimuli, weapon, damageresolved, spdamage, damageredirecttarget)
-    if target then
+    if target and not inst.aoe_processing then
         if inst.aoe then
+            inst.aoe_processing = true
             inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavlaser_skill")
-            --inst.components.combat:DoAreaAttack(data.target, 5.5, nil, nil, nil,
-            --{ "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
-            local x, y, z = inst.Transform:GetWorldPosition()
-            local ents = TheSim:FindEntities(x, y, z, 3, nil,
-                { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
-
-            for k, v in ipairs(ents) do
-                if v and v.components.health and v ~= target then
-                    inst.components.combat:DoAttack(v)
-                end
-            end
+            -- 使用官方DoAreaAttack函数替代自定义实现
+            local exclude_tags = { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" }
+            inst.components.combat:DoAreaAttack(inst, 2, nil, nil, stimuli, exclude_tags)
+            inst.aoe_processing = false
         end
     end
 
 end
 
 local function onhitother(inst, target, damage, stimuli, weapon, damageresolved, spdamage, damageredirecttarget)
-    if inst.aoe then
-        inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit_skill")
-        local x, y, z = target.Transform:GetWorldPosition()
-        local ents = TheSim:FindEntities(x, y, z, 3, nil,
-            { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
-        for k, v in ipairs(ents) do
-            if v and v ~= target then
-                inst.components.combat:DoAttack(v)
-            end
+    if target and not inst.aoe_processing then
+        local exclude_tags = { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" }
+        
+        inst.aoe_processing = true
+        if inst.aoe then
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit_skill")
+            -- 使用官方DoAreaAttack函数，范围3
+            inst.components.combat:DoAreaAttack(target, 4, nil, nil, stimuli, exclude_tags)
+        else
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit")
+            -- 使用官方DoAreaAttack函数，范围2
+            inst.components.combat:DoAreaAttack(target, 3, nil, nil, stimuli, exclude_tags)
         end
-    elseif not inst.aoe then
-        inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit")
-        local x, y, z = target.Transform:GetWorldPosition()
-        local ents = TheSim:FindEntities(x, y, z, 2, nil,
-            { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" })
-        for k, v in ipairs(ents) do
-            if v and v ~= target then
-                inst.components.combat:DoAttack(v)
-            end
-        end
+        inst.aoe_processing = false
     end
 
 end

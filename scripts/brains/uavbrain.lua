@@ -146,7 +146,26 @@ local function FindEntityToWorkAction(inst, action, addtltags) --挖矿
 end
 
 local function CanAttack(inst)
-    local target = inst.components.combat.target or inst:GetTarget(inst)
+    -- 获取当前目标
+    local currentTarget = inst.components.combat.target
+    
+    -- 获取领导者
+    local leader = GetLeader(inst)
+    
+    -- 如果有领导者且领导者有攻击目标，优先考虑领导者的目标
+    local leaderTarget = nil
+    if leader and leader.components.combat and leader.components.combat.target then
+        leaderTarget = leader.components.combat.target
+        
+        -- 如果领导者的目标有效且可攻击，设置为新目标
+        if leaderTarget and inst.components.combat:CanTarget(leaderTarget) and inst:IsWithinAttackRange(leaderTarget) then
+            inst.components.combat:SetTarget(leaderTarget)
+            return true
+        end
+    end
+    
+    -- 常规目标检查逻辑
+    local target = currentTarget or inst:GetTarget(inst)
     if target ~= nil then
         if inst:IsWithinAttackRange(target) then
             inst.components.combat:SetTarget(target)

@@ -63,13 +63,17 @@ end
 
 local function OnHit(inst, owner, target)
     SpawnPrefab("mgl_uav_66_hit").Transform:SetPosition(inst.Transform:GetWorldPosition())
-    --添加命中特效
-    local fx = SpawnPrefab("mgl_fx")
-    fx.Transform:SetPosition(target.Transform:GetWorldPosition())
-    fx.AnimState:PlayAnimation("mgl_uav_66_hit")
-    fx:ListenForEvent("animover", function()
-        fx:Remove()
-    end)
+    if target.mgl_hitted_fix == nil then
+        --添加命中特效
+        local fx = SpawnPrefab("mgl_fx")
+        fx.Transform:SetPosition(target.Transform:GetWorldPosition())
+        fx.AnimState:PlayAnimation("mgl_uav_66_hit")
+        target.mgl_hitted_fix = fx
+        fx:ListenForEvent("animover", function()
+            fx:Remove()
+            target.mgl_hitted_fix = nil
+        end)
+    end
     inst:Remove()
 end
 
