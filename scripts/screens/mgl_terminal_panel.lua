@@ -84,6 +84,15 @@ local MglTerminalPanel = Class(Screen, function(self, owner)
     self.research_text:SetString("科考购置")
     self.research_text:SetColour(1, 1, 1, 1)
     self.research_text:SetPosition(-40, 47.5)
+    self.research_icon:SetOnClick(function()
+        -- 延迟导入以避免循环依赖
+        local MglResearchShopPanel = require "screens/mgl_research_shop_panel"
+        local screen = TheFrontEnd:GetActiveScreen()
+        if screen and screen.name == "mgl_terminal_panel" then
+            screen:Close()
+        end
+        TheFrontEnd:PushScreen(MglResearchShopPanel(self.owner))
+    end)
 
 end)
 

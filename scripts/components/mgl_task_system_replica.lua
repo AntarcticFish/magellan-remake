@@ -4,6 +4,7 @@
 ---@field inst ent
 ---@field completed_tasks_str netvar # 已完成任务的字符串形式，用逗号分隔
 ---@field completed_tasks table # 已完成任务的缓存
+---@field science_points netvar # 科研点数
 local mgl_task_system_replica = Class(
 ---@param self replica_mgl_task_system
 ---@param inst ent
@@ -12,6 +13,9 @@ function(self, inst)
     
     -- 创建网络变量用于同步已完成的任务
     self.completed_tasks_str = net_string(inst.GUID, "mgl_task_system.completed_tasks_str", "task_status_changed")
+    
+    -- 创建网络变量用于同步科研点数
+    self.science_points = net_float(inst.GUID, "mgl_task_system.science_points", "science_points_changed")
     
     -- 初始化已完成任务的缓存
     self.completed_tasks = {}
@@ -102,6 +106,18 @@ function mgl_task_system_replica:GetItemCount(player, item_prefab)
     return 0
 end
 
+-- 服务器端调用：设置科研点数（只在主机端有效）
+function mgl_task_system_replica:SetSciencePoints(points)
+    if TheWorld.ismastersim then
+        self.science_points:set(points)
+    end
+end
+
+-- 客户端调用：获取科研点数
+function mgl_task_system_replica:GetSciencePoints()
+    return self.science_points:value()
+end
+
 -- 检查任务要求是否满足（客户端版本，用于UI显示）
 function mgl_task_system_replica:CheckTaskRequirements(player, task_id)
     -- 加载任务数据
@@ -147,6 +163,13 @@ function mgl_task_system_replica:RPCSubmitTask(task_id)
     -- 在Don't Starve Together中，使用SendModRPCToServer函数发送RPC调用
     SendModRPCToServer(MOD_RPC["magellan_remake"]["SubmitTask"], task_id)
     return true, "任务提交请求已发送到服务器"
+end
+
+-- RPC方法：购买商店物品
+function mgl_task_system_replica:RPCBuyShopItem(item_id)
+    -- 在Don't Starve Together中，使用SendModRPCToServer函数发送RPC调用
+    SendModRPCToServer(MOD_RPC["magellan_remake"]["BuyShopItem"], item_id)
+    return true, "购买请求已发送到服务器"
 end
 
 -- 更新任务状态

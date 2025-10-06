@@ -274,10 +274,13 @@ function MglResearchTaskPanel:CreateTaskList()
     -- 初始化任务列表
     self:RefreshTasksList()
     
-    -- 创建滚动列表 - 移到右侧选项栏
-    local widget_width = 200
+    -- 使用简化且可靠的方式定位元素
+    local right_bar_height = 485
+    
+    -- 创建滚动列表 - 调整参数使内容完全在右侧选项栏内
+    local widget_width = 180
     local widget_height = 40
-    local num_visible_rows = 10
+    local num_visible_rows = 9
     
     self.task_scroll_list = self.right_bar:AddChild(TEMPLATES.ScrollingGrid(
         self.tasks,
@@ -289,19 +292,30 @@ function MglResearchTaskPanel:CreateTaskList()
             num_columns = 1,
             item_ctor_fn = TaskItemCtor,
             apply_fn = ApplyDataToTaskItem,
-            scrollbar_offset = -5,
+            scrollbar_offset = 7,
             scrollbar_height_offset = 0,
             peek_percent = 0.1,
             allow_bottom_empty_row = true,
-            scrollbar_width = 8,
-            scrollbar_height = (widget_height * num_visible_rows) * 0.8,
-            scrollbar_bg_color = {0, 0, 0, 0.3},
-            scrollbar_color = {0.7, 0.7, 0.7, 0.8}
+            scrollbar_height = (widget_height * num_visible_rows) * 0.8
         }
     ))
     
-    -- 设置滚动列表位置
-    self.task_scroll_list:SetPosition(0, 0)
+    -- 设置滚动列表位置，使其位于右侧选项栏上方区域
+    self.task_scroll_list:SetPosition(0, 30)
+    
+    -- 添加返回按钮，位于滚动列表下方，确保在右侧选项栏内
+    self.back_button = self.right_bar:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
+    self.back_button:SetScale(1.4, 0.7)
+    self.back_button:SetPosition(0, -180)
+    self.back_button:SetTextSize(20)
+    self.back_button:SetText("返回终端")
+    self.back_button.text:SetColour(1, 1, 1, 1)
+    self.back_button:SetOnClick(function()
+        -- 关闭当前面板并打开mgl_terminal_panel
+        self:Close()
+        local MglTerminalPanel = require "screens/mgl_terminal_panel"
+        TheFrontEnd:PushScreen(MglTerminalPanel(self.owner))
+    end)
     
     -- 添加任务状态变化事件监听器
     self:AddTaskStatusListeners()

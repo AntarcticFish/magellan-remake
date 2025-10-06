@@ -18,6 +18,9 @@ local mgl_task_system = Class(function(self, inst)
     
     -- 任务完成状态存储
     self.completed_tasks = {}
+    
+    -- 科研点数
+    self.science_points = 0
     -- 监听周期变化（天数变化）
     self:WatchWorldState("cycles", function()
         -- 只在主机（服务器）端执行任务重置逻辑
@@ -244,7 +247,10 @@ function mgl_task_system:GiveTaskRewards(player, reward_items)
         -- 根据奖励类型处理
         if reward.item == "mgl_science_points" then
             -- 科技点数奖励
-            player.components.talker:Say(string.format("获得了 %d 点科技点数!", reward.amount))
+            local success, total_points = self:AddSciencePoints(reward.amount)
+            if success then
+                player.components.talker:Say(string.format("获得了 %d 点科技点数! 总计 %d 点", reward.amount, total_points))
+            end
         -- 这里可以添加更多奖励类型的处理
         end
     end
@@ -285,28 +291,146 @@ function mgl_task_system:OnInit()
     self:PushTaskStatusEvent()
 end
 
+-- 获取当前科研点数
+function mgl_task_system:GetSciencePoints()
+    return self.science_points
+end
+
+-- 设置科研点数
+function mgl_task_system:SetSciencePoints(points)
+    if points >= 0 then
+        self.science_points = points
+        -- 同步科研点数到客户端
+        self:PushSciencePointsUpdate()
+        return true
+    end
+    return false
+end
+
+-- 增加科研点数
+function mgl_task_system:AddSciencePoints(amount)
+    if amount > 0 then
+        self.science_points = self.science_points + amount
+        -- 同步科研点数到客户端
+        self:PushSciencePointsUpdate()
+        return true, self.science_points
+    end
+    return false, self.science_points
+end
+
+-- 消耗科研点数
+function mgl_task_system:ConsumeSciencePoints(amount)
+    if amount > 0 and self.science_points >= amount then
+        self.science_points = self.science_points - amount
+        -- 同步科研点数到客户端
+        self:PushSciencePointsUpdate()
+        return true, self.science_points
+    end
+    return false, self.science_points
+end
+
+-- 购买商店物品
+function mgl_task_system:BuyShopItem(player, item_id)
+    -- 加载商店商品数据
+    local shop_data = require "core_magellan_remake/data/mgl_research_shop_data"
+    
+    -- 查找要购买的商品
+    local item_to_buy = nil
+    for _, item in ipairs(shop_data) do
+        if item.id == item_id then
+            item_to_buy = item
+            break
+        end
+    end
+    
+    -- 检查商品是否存在
+    if not item_to_buy then
+        player.components.talker:Say("无法找到该商品！")
+        return false, "商品不存在"
+    end
+    
+    -- 检查玩家是否有足够的科研点数
+    if self.science_points < item_to_buy.price then
+        player.components.talker:Say("科研点数不足！")
+        return false, "科研点数不足"
+    end
+    
+    -- 消耗科研点数
+    local success, remaining_points = self:ConsumeSciencePoints(item_to_buy.price)
+    if not success then
+        player.components.talker:Say("购买失败！")
+        return false, "购买失败"
+    end
+    
+    -- 生成并给予物品
+    if item_to_buy.item_prefab then
+        local item = SpawnPrefab(item_to_buy.item_prefab)
+        if item then
+            -- 尝试将物品放入玩家物品栏
+            if player.components.inventory then
+                player.components.inventory:GiveItem(item)
+                player.components.talker:Say("购买了 " .. item_to_buy.name .. "！")
+                return true, "购买成功"
+            else
+                -- 如果玩家没有物品栏组件，直接将物品放置在玩家旁边
+                item.Transform:SetPosition(player.Transform:GetWorldPosition())
+                player.components.talker:Say("购买了 " .. item_to_buy.name .. "！")
+                return true, "购买成功"
+            end
+        else
+            -- 如果物品生成失败，退还科研点数
+            self:AddSciencePoints(item_to_buy.price)
+            player.components.talker:Say("物品生成失败，请重试！")
+            return false, "物品生成失败"
+        end
+    else
+        -- 如果没有指定prefab，可能是特殊商品或服务
+        -- 这里可以根据需要扩展处理逻辑
+        player.components.talker:Say("已购买 " .. item_to_buy.name .. "！")
+        return true, "特殊商品购买成功"
+    end
+end
+
+-- 推送科研点数更新到客户端
+function mgl_task_system:PushSciencePointsUpdate()
+    if TheWorld.ismastersim and self.inst.replica.mgl_task_system then
+        self.inst.replica.mgl_task_system:SetSciencePoints(self.science_points)
+    end
+end
+
 -- 组件保存功能 - 将任务状态保存到存档
 function mgl_task_system:OnSave()
     -- 构建保存数据
     local data = {
-        completed_tasks = self.completed_tasks
+        completed_tasks = self.completed_tasks,
+        science_points = self.science_points
     }
     return data
 end
 
 -- 组件加载功能 - 从存档加载任务状态
 function mgl_task_system:OnLoad(data)
-    if data and data.completed_tasks then
+    if data then
         -- 从存档加载已完成任务状态
-        self.completed_tasks = shallowcopy(data.completed_tasks)
-    else
-        -- 如果没有存档数据，使用默认值
-        self.completed_tasks = {}
-        self:LoadTaskStatus() -- 回退到初始加载
+        if data.completed_tasks then
+            self.completed_tasks = shallowcopy(data.completed_tasks)
+        else
+            -- 如果没有存档数据，使用默认值
+            self.completed_tasks = {}
+            self:LoadTaskStatus() -- 回退到初始加载
+        end
+        
+        -- 从存档加载科研点数
+        if data.science_points then
+            self.science_points = data.science_points
+        else
+            self.science_points = 0
+        end
     end
     
     -- 加载完成后推送状态更新
     self:PushTaskStatusEvent()
+    self:PushSciencePointsUpdate()
 end
 
 -- 组件移除时的清理

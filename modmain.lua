@@ -149,6 +149,7 @@ end
 AddPenguinInspectSound("penguin") -- 普通企鹅
 AddPenguinInspectSound("mutated_penguin") -- 月岩企鹅
 
+--任务系统组件
 -- 注册RPC函数，用于客户端提交任务
 AddModRPCHandler("magellan_remake", "SubmitTask", function(player, task_id)
     -- print("服务器接收到RPC任务提交请求，任务ID:", task_id, "玩家:", player)
@@ -156,5 +157,13 @@ AddModRPCHandler("magellan_remake", "SubmitTask", function(player, task_id)
     if player and player:IsValid() and player.components and player.components.mgl_task_system then
         -- print("玩家实体上存在任务系统组件，正在提交任务")
         player.components.mgl_task_system:SubmitTask(player, task_id)
+    end
+end)
+--任务系统组件
+-- 注册RPC函数，用于客户端购买商店物品
+AddModRPCHandler("magellan_remake", "BuyShopItem", function(player, item_id)
+    -- 检查玩家实体和任务系统组件是否存在
+    if player and player:IsValid() and player.components and player.components.mgl_task_system then
+        player.components.mgl_task_system:BuyShopItem(player, item_id)
     end
 end)
