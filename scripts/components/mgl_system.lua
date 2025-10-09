@@ -155,7 +155,7 @@ local function EquipWeapon(inst,projectile)
         -- 设置武器的默认伤害值
         weapon.components.weapon:SetDamage(inst.components.combat.defaultdamage)
         -- 设置武器的攻击范围
-        weapon.components.weapon:SetRange(inst.components.combat.attackrange)
+        weapon.components.weapon:SetRange(inst.components.combat.attackrange, inst.components.combat.attackrange + 4)
         -- 设置武器的弹道类型
         weapon.components.weapon:SetProjectile(projectile)
         -- 添加库存项组件，使武器可以被装备和丢弃
@@ -374,7 +374,6 @@ function Mgl_System:CallUav()
             end
             uav.SoundEmitter:PlaySound("mgl_audio/mgl_audio/uav_call")
 
-            uav.owner = self.inst
 
             -- if self.inst.components.inventory:EquipHasTag("mgl_mapper_item") then
             --     uav.components.follower:SetLeader(self.inst)

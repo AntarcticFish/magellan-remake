@@ -135,6 +135,7 @@ local function fn()
     inst:AddTag("notarget")
     inst:AddTag("flight")
     inst:AddTag("uav")
+    inst:AddTag("crazy") -- 影怪
     
 
     inst.entity:SetPristine()
@@ -153,6 +154,9 @@ local function fn()
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(1)
     inst.components.health:SetMinHealth(1)
+    if inst.components.health ~= nil then
+		inst.components.health:SetInvincible(true)
+	end
 
     inst:AddComponent("combat")
     inst.components.combat:SetKeepTargetFunction(keeptargetfn)
@@ -185,7 +189,7 @@ local function fn()
     inst.persists = false
 
     inst:DoPeriodicTask(1, function(inst)
-        if inst.owner == nil then
+        if inst.components.follower.leader == nil then
             inst:Remove()
         end
     end)

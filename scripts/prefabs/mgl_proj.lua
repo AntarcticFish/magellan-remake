@@ -39,7 +39,7 @@ local function fn()
     end
 
     inst:AddComponent("projectile")
-    inst.components.projectile:SetSpeed(15)
+    inst.components.projectile:SetSpeed(30)
     inst.components.projectile:SetHoming(true)
     inst.components.projectile:SetHitDist(2)
     inst.components.projectile:SetOnHitFn(onhit)

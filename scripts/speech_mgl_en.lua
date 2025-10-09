@@ -20,6 +20,48 @@ return { --台词
         MUTATED_PENGUIN = {
             GENERIC = "Gu gu ga ga!",  --月岩企鸥
         },
+        --         --明日方舟慕斯
+        -- MOUSSE = {
+        --     GENERIC = "要一起做蛋糕吗，%s？"
+        -- },
+        -- --明日方舟史尔特尔
+        -- SURTR = {
+        --     GENERIC = "哇！我可以摸摸你的大剑吗？好烫！"
+        -- },
+        -- --明日方舟夕
+        -- DUSK = {
+        --     GENERIC = "哇~好神奇的画！"
+        -- },
+        -- --明日方舟极光aurora
+        -- AURORA = {
+        --     GENERIC = "准备好一起参加下次科考任务了吗，%s？"
+        -- },
+        -- --明日方舟缪尔塞斯
+        -- MUELSYSE = {
+        --     GENERIC = "缪缪！好久不见~"
+        -- },
+        -- --明日方舟麦哲伦
+        -- MGL = {
+        --     GENERIC = "诶？难道说你是另一个我吗？"
+        -- },
+        MOUSSE = {
+            GENERIC = "Do you want to make a cake together, %s?"
+        },
+        SURTR = {
+            GENERIC = "Wow! Can I touch your sword? Ouch!"
+        },
+        DUSK = {
+            GENERIC = "Wow~ So magic painting!"
+        },
+        AURORA = {
+            GENERIC = "Are you ready to join the next scientific expedition, %s?"
+        },
+        MUELSYSE = {
+            GENERIC = "Mewmew! I haven't seen you for a while~"
+        },
+        MGL = {
+            GENERIC = "Are you sure you're not another me, %s?"
+        },
     },
     BATTLECRY =
 	{
