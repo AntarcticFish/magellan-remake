@@ -9,7 +9,7 @@
 	],
 	"settings": {
 		"editor.tabSize": 4,
-		"workbench.editor.showTabs": "none",
+		"workbench.editor.showTabs": "multiple",
 		"explorer.openEditors.sortOrder": "alphabetical",
 		"workbench.colorTheme": "Monokai",
 		"Lua.runtime.version": "Lua 5.1",

@@ -123,7 +123,9 @@ function dst_lan:SetEquipAtkPeriod(tbl)
                 local old_onequipfn = inst.components.equippable.onequipfn
                 inst.components.equippable.onequipfn = function(inst, owner, from_ground, ...)
                     if owner:HasTag("player") and owner.components.combat and owner.components.combat.SetAtkPeriodModifier then
-                        owner.components.combat:SetAtkPeriodModifier(inst, v, PREFIX_MODIFIER..k)
+                        if not (owner.replica.rider ~= nil and owner.replica.rider:IsRiding()) then
+                            owner.components.combat:SetAtkPeriodModifier(inst, v, PREFIX_MODIFIER..k)
+                        end
                     end
                     return old_onequipfn ~= nil and old_onequipfn(inst, owner, from_ground, ...)
                 end
