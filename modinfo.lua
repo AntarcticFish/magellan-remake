@@ -50,7 +50,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.0'
+version = '1.0.1'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10
