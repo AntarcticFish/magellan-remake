@@ -147,16 +147,23 @@ local function OnAttack(inst, doer)
     if not inst.components.finiteuses then  -- **添加组件存在检查**
         return
     end
+    if inst.components.finiteuses:GetUses() <= 0 and owner then
+        owner.AnimState:OverrideSymbol("swap_object", "swap_mgl_mapper", "broken")
+    end
+end
+
+-- 添加一个独立的函数来初始化武器伤害，只在装备时调用一次
+local function InitializeWeaponStats(inst, owner)
+    if not owner or not owner.components or not owner:HasTag("mgl") then
+        return
+    end
     if owner.mgl_level and inst.components.mgl_mapper and inst.components.mgl_mapper.level then
         local level = owner.mgl_level:value() or 0
         local itemlevel = inst.components.mgl_mapper.level
         local moerdamage = itemlevel >= 1 and 15 or 0
+        -- 只在装备时初始化一次伤害，之后不再修改基础伤害
         inst.components.weapon:SetRange(weapon_data[level].range)
         inst.components.planardamage:SetBaseDamage(weapon_data[level].damage + moerdamage)
-
-        if inst.components.finiteuses:GetUses() <= 0 and owner then
-            owner.AnimState:OverrideSymbol("swap_object", "swap_mgl_mapper", "broken")
-        end
     end
 end
 
@@ -176,7 +183,8 @@ local function onequip(inst, owner)
     inst:ListenForEvent("unequipped", unequipped, fx)
     inst.mgl_fx = fx
     turnon(inst)
-    OnAttack(inst, owner)
+    -- 使用新的初始化函数替代原来的OnAttack调用
+    InitializeWeaponStats(inst, owner)
 
     inst.components.inventoryitem.atlasname = "images/inventoryimages/mgl_mapper_item.xml"
     inst.components.inventoryitem:ChangeImageName("mgl_mapper_item")

@@ -555,16 +555,18 @@ function Mgl_System:UseSkill()
                 v.skilltask = true
             end
         elseif self.uav_type == 2 then
-            local min_attack_period = {
-                [1] = 0.5,
-                [2] = 0.4
-            }
+            --精一倍率
+            local min_attack_period = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill2_atk_speed") or 0.5
+            if mgl_level > 1 then
+                min_attack_period = min_attack_period - 0.1
+            end
+            -- print("当前攻速加成："..min_attack_period)
             -- 为玩家添加临时攻速加成
             if self.inst.components.combat and self.inst.components.combat.SetAtkPeriodModifier then
                 -- 保存原始攻速倍率，用于技能结束后恢复
                 self.skill_atk_speed_source = self.inst
                 self.skill_atk_speed_key = "mgl_skill_buff"
-                self.skill_atk_speed_mult = 0.8 / min_attack_period[mgl_level]  -- 攻速
+                self.skill_atk_speed_mult = 0.8 / min_attack_period  -- 攻速
                 
                 -- 设置攻速加成，参数分别是：来源、倍率、唯一标识
                 self.inst.components.combat:SetAtkPeriodModifier(
@@ -575,7 +577,7 @@ function Mgl_System:UseSkill()
             end
             for k, v in pairs(self.follower) do
                 v.aoe = true
-                v.components.combat.min_attack_period = min_attack_period[mgl_level] or 0.5
+                v.components.combat.min_attack_period = min_attack_period
                 if v and v.entity then
                     local skillfx = SpawnPrefab("mgl_fx")
                     skillfx.entity:SetParent(v.entity)
@@ -585,12 +587,14 @@ function Mgl_System:UseSkill()
                 end
             end
         elseif self.uav_type == 3 then
+            local dmg_multiplier = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill3_dmg_multiplier") or 2.5
+            -- print("当前伤害倍率加成："..dmg_multiplier)
             -- 为玩家添加临时伤害倍率加成
             if self.inst.components.magellan_remake_dmg_modifier then
                 -- 保存伤害倍率信息，用于技能结束后恢复
                 self.skill_dmg_source = self.inst
                 self.skill_dmg_key = "mgl_damage_buff"
-                self.skill_dmg_mult = 2.5 -- 伤害倍率
+                self.skill_dmg_mult = dmg_multiplier -- 伤害倍率
                 
                 -- 设置物理伤害乘算加成
                 self.inst.components.magellan_remake_dmg_modifier:ModifierNormal(
@@ -603,7 +607,7 @@ function Mgl_System:UseSkill()
             end
             for k, v in pairs(self.follower) do
                 v.aoe = true
-                v.components.combat.damagemultiplier = 2.5
+                v.components.combat.damagemultiplier = dmg_multiplier
                 if v and v.entity then
                     local skillfx = SpawnPrefab("mgl_fx")
                     skillfx.entity:SetParent(v.entity)

@@ -20,7 +20,21 @@ local LANGS = {
             -- {modid..'_enable_blackhole_protocol','是否启用黑洞协议','是否启用黑洞协议',false,{
             --     {'禁用',false},
             --     {'启用',true}
-            -- }}
+            -- }},
+            {'技能参数'},
+            {modid..'_skill2_atk_speed','2技能攻速缩减倍率(乘算)','2技能攻速缩减倍率(精一/精二)',0.5,{
+                {'0.4x/0.5x(默认)',0.5},
+                {'0.5x/0.6x',0.6},
+                {'0.6x/0.7x',0.7},
+                {'0.7x/0.8x',0.8}
+            }},
+            {modid..'_skill3_dmg_multiplier','3技能伤害倍率(乘算)','3技能伤害倍率(乘算)',2.5,{
+                {'1.5x',1.5},
+                {'1.75x',1.75},
+                {'2x',2},
+                {'2.25x',2.25},
+                {'2.5x(默认)',2.5}
+            }}
         }
     },
     --英文
@@ -41,7 +55,23 @@ local LANGS = {
             -- {modid..'_enable_blackhole_protocol','Enable Blackhole Protocol','Enable blackhole protocol',false,{
             --     {'Disabled',false},
             --     {'Enabled',true}
-            -- }}
+            -- }},
+            {'Skill Parameters'},
+            --英文
+            {modid..'_skill2_atk_speed','Skill 2 Attack Speed Multiplier()','Skill 2 attack speed multiplier(Elite 1/Elite 2)',0.5,{
+                {'0.4x/0.5x(Default)',0.5},
+                {'0.5x/0.6x',0.6},
+                {'0.6x/0.7x',0.7},
+                {'0.7x/0.8x',0.8}
+            }},
+            --英文
+            {modid..'_skill3_dmg_multiplier','Skill 3 Damage Multiplier(Multiplicative)','Skill 3 damage multiplier(Multiplicative)',2.5,{
+                {'1.5x',1.5},
+                {'1.75x',1.75},
+                {'2x',2},
+                {'2.25x',2.25},
+                {'2.5x(Default)',2.5}
+            }}
         }
     },
 }
@@ -50,7 +80,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.1'
+version = '1.0.2'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10
@@ -72,7 +102,7 @@ icon = 'modicon.tex' -- 图标
 
 -- 以下自动配置
 name = LANGS[cur].name
-description = '当前版本:'..version..'\n'..LANGS[cur].description
+description = 'version:'..version..'\n'..LANGS[cur].description
 
 -- local op = {
 --     {description='A', data = 97},

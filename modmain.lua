@@ -49,7 +49,9 @@ for _,v in ipairs({
 	'_key_call_uav',
 	'_key_mgl_skill',
 	'_key_mgl_change_uav',
-	-- '_enable_blackhole_protocol'
+	-- '_enable_blackhole_protocol',
+	'_skill2_atk_speed',
+	'_skill3_dmg_multiplier'
 }) do TUNING[string.upper('CONFIG_'..modid..v)] = GetModConfigData(modid..v) end
 
 
