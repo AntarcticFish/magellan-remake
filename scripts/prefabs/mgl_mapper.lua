@@ -231,7 +231,10 @@ local function OnFinished(inst)
 end
 
 local function ondeploy(inst, pt, deployer)
-    if deployer.components.mgl_system == nil then
+    if deployer.components.mgl_system == nil or not deployer:HasTag("mgl") then
+        local back = SpawnSaveRecord(inst:GetSaveRecord()) or SpawnPrefab("mgl_mapper_item")
+        local pos = deployer:GetPosition()
+        deployer.components.inventory:GiveItem(back, nil, pos)
         return
     end
 
@@ -425,7 +428,7 @@ local function build_fn()
     inst:AddComponent("mgl_item")
 
     inst:AddComponent("sanityaura")
-    inst.components.sanityaura.aura = TUNING.SANITYAURA_SMAL
+    inst.components.sanityaura.aura = TUNING.SANITYAURA_SMALL
     inst.components.sanityaura.aurafn = SanityAura
     inst.components.sanityaura.max_distsq = 15
 
