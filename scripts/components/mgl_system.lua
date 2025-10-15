@@ -307,10 +307,11 @@ function Mgl_System:RemoveFollower()
                 for slot = 1, v.components.inventory:GetNumSlots() do
                     local item = v.components.inventory:GetItemInSlot(slot)
                     if item then
-                        v.components.inventory:DropItem(item, true, true)
-                        item.Transform:SetPosition(self.inst:GetPosition():Get())
+                        v.components.inventory:DropItem(item, true, true, self.inst:GetPosition())
                     end
                 end
+                --将无人机container中物品丢出
+                v.components.container:DropEverything(self.inst:GetPosition())
             end
             v.attack = false
             -- 延迟0.5秒后继续执行撤退逻辑
@@ -379,6 +380,9 @@ function Mgl_System:CallUav()
             --     uav.components.follower:SetLeader(self.inst)
             -- end
             uav.components.follower:SetLeader(self.inst)
+            if self.uav_type == 4 then
+                uav.components.container.canbeopened = true
+            end
 
             if self.uav_type == 1 or self.uav_type == 2 or self.uav_type == 3 then
                 uav.attack = true

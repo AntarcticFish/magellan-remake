@@ -141,6 +141,9 @@ local function fn()
     inst.entity:SetPristine()
 
     if not TheWorld.ismastersim then
+        inst.OnEntityReplicated = function(inst)
+            inst.replica.container:WidgetSetup('uav_container')
+        end
         return inst
     end
 
@@ -168,6 +171,10 @@ local function fn()
 
     inst:AddComponent("inventory")
     inst.components.inventory.maxslots = 9
+
+    inst:AddComponent("container")
+    inst.components.container:WidgetSetup("uav_container")
+    inst.components.container.canbeopened = false
 
     inst:AddComponent("follower")
     inst.components.follower:KeepLeaderOnAttacked()

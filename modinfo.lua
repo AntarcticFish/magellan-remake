@@ -5,7 +5,7 @@ local modid = 'magellan_remake'
 local LANGS = {
     ['zh'] = {
         name = '明日方舟 麦哲伦',
-        description = '麦哲伦同人模组\n游戏中技能UI右键按住可拖拽\n技能按键可进入设置自行调整\n\n模组后续会有新的更新内容，有好的想法可进群交流\nBug反馈及交流Q群:763944960',
+        description = '麦哲伦同人模组\n游戏中技能UI右键按住可拖拽\n技能按键可进入设置自行调整\n\n模组后续会有新的更新内容，有好的想法可进群交流\nBug反馈及交流Q群:763944960\n帮忙在创意工坊点点赞吧，谢谢喵！',
         config = {
             {'语言'},
             {modid..'_lang','语言','语言','cn',{
@@ -40,7 +40,7 @@ local LANGS = {
     --英文
     ['en'] = {
         name = 'Arknights Magallan',
-        description = 'Magallan in Arknights.\n\nGameplay skills can be activated by right-clicking and dragging.\nSkill keys can be customized in the settings.\n\nFuture updates will include new features.\nFor any ideas or bug reports, please leave a message on the workshop page.',
+        description = 'Magallan in Arknights.\nGameplay skills can be activated by right-clicking and dragging.\nSkill keys can be customized in the settings.\nFuture updates will include new features.\nFor any ideas or bug reports, please leave a message on the workshop page.\nPlease give a like on the Steam Workshop, thank you meow!',
         config = {
             {'Language'},
             {modid..'_lang','Language','Language','en',{
@@ -80,7 +80,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.3'
+version = '1.0.4'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10

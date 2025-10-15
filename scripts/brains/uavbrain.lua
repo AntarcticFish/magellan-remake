@@ -13,9 +13,9 @@ local Uav_Brain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
 end)
 
-local MIN_FOLLOW_LEADER = 2
+local MIN_FOLLOW_LEADER = 0
 local MAX_FOLLOW_LEADER = 15
-local TARGET_FOLLOW_LEADER = 7
+local TARGET_FOLLOW_LEADER = 5
 local AVOID_EXPLOSIVE_DIST = 5
 -- 定义无人机的徘徊时机变量，包括最小等待时间和随机等待时间的范围
 local WANDER_TIMING = {minwaittime = 6, randwaittime = 3}
