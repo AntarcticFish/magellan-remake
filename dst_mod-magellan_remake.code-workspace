@@ -3,9 +3,6 @@
 		{
 			"path": "."
 		},
-		{
-			"path": "../../data/databundles/scripts-官方源码"
-		}
 	],
 	"settings": {
 		"editor.tabSize": 4,
