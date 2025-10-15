@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "E:/SteamLibrary/steamapps/common/Don't Starve Together/data/databundles/scripts-官方源码"
+			"path": "../../data/databundles/scripts-官方源码"
 		}
 	],
 	"settings": {
