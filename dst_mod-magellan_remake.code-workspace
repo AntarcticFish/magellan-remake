@@ -18,6 +18,7 @@
 		],
 		"Lua.workspace.library": [
             "E:\\lsp-dst\\scripts"
-        ]
+		],
+		"Codegeex.RepoIndex": true
 	}
 }
