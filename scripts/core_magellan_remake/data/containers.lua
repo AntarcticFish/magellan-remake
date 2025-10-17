@@ -48,9 +48,9 @@ params.uav_container = {
     },
     type = 'uav_container', -- 背包类型容器
     itemtestfn = function(container, item, slot)
-        if slot == nil then -- 这样设置就能让shift左键失效,还能保证giveitem能用,我也不知道原因,群佬没告诉我
-            return false 
-        end
+        -- if slot == nil then 
+        --     return false 
+        -- end
         return true
     end
 }

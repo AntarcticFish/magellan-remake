@@ -5,6 +5,14 @@ local assets = {
     Asset("ATLAS", "images/inventoryimages/mgl_mapper_item.xml"),
 }
 
+-- Helper: 获取测绘仪的有效等级，优先从持有者的 mgl_system 中读取（向后兼容）
+local function GetEffectiveMapperLevel(inst, owner)
+    if owner and owner.components and owner.components.mgl_system and owner.components.mgl_system.mgl_mapper_level ~= nil then
+        return owner.components.mgl_system.mgl_mapper_level
+    end
+    return 0
+end
+
 local function PlayTurnOnSound(inst)
     if inst._soundtask ~= nil then
         inst._soundtask:Cancel()
@@ -111,7 +119,8 @@ local function turnon(inst)
 
         if inst._task == nil then
             inst._task = inst:DoPeriodicTask(1.92, function()
-                local itemlevel = inst.components.mgl_mapper.level
+                local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
+                local itemlevel = GetEffectiveMapperLevel(inst, owner)
                 if itemlevel >= 1 then
                     inst.components.finiteuses:Use(0.075)
                 else
@@ -157,9 +166,9 @@ local function InitializeWeaponStats(inst, owner)
     if not owner or not owner.components or not owner:HasTag("mgl") then
         return
     end
-    if owner.mgl_level and inst.components.mgl_mapper and inst.components.mgl_mapper.level then
+    if owner.mgl_level then
         local level = owner.mgl_level:value() or 0
-        local itemlevel = inst.components.mgl_mapper.level
+        local itemlevel = GetEffectiveMapperLevel(inst, owner)
         local moerdamage = itemlevel >= 1 and 15 or 0
         -- 只在装备时初始化一次伤害，之后不再修改基础伤害
         inst.components.weapon:SetRange(weapon_data[level].range)
@@ -245,13 +254,13 @@ local function ondeploy(inst, pt, deployer)
     pot.AnimState:PlayAnimation("stand_place")
     pot.AnimState:PushAnimation("stand_idle", true)
 
-    pot.components.mgl_mapper.level = inst.components.mgl_mapper.level
+    local itemlevel = GetEffectiveMapperLevel(inst, deployer)
     pot.components.mgl_item.userid = deployer.userid
     pot.components.fueled:SetPercent(inst.components.finiteuses:GetPercent())
 
     light_on(pot)
 
-    if pot.components.mgl_mapper.level >= 1 then
+    if itemlevel >= 1 then
         pot.components.fueled.rate = 0.75
     else
         pot.components.fueled.rate = 1
@@ -277,7 +286,6 @@ local function OnDismantle(inst, doer)
     doer.components.inventory:GiveItem(item, nil, pos)
     doer.components.mgl_system.tool = nil
 
-    item.components.mgl_mapper.level = inst.components.mgl_mapper.level
     item.components.inventoryitem.atlasname = "images/inventoryimages/mgl_mapper_item.xml"
     item.components.inventoryitem:ChangeImageName("mgl_mapper_item")
 
@@ -300,7 +308,8 @@ local function OnDismantle(inst, doer)
 end
 
 local function UsePower(inst)
-    local itemlevel = inst.components.mgl_mapper.level
+    local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
+    local itemlevel = GetEffectiveMapperLevel(inst, owner)
     if itemlevel > 1 then
         inst.components.finiteuses:Use(0.75)
     else
@@ -332,7 +341,7 @@ local function fn()
         return inst
     end
 
-    inst:AddComponent('mgl_mapper')
+    -- inst:AddComponent('mgl_mapper')
 
     inst:AddComponent("inspectable")
 
@@ -421,7 +430,7 @@ local function build_fn()
         return inst
     end
 
-    inst:AddComponent('mgl_mapper')
+    -- inst:AddComponent('mgl_mapper')
 
     inst:AddComponent("inspectable")
 

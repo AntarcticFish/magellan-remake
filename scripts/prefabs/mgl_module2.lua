@@ -10,10 +10,8 @@ local function useitem(inst, doer, item)
                 doer.components.talker:Say(STRINGS.MGL_MUST_LEVEL2)
                 return
             elseif doer.components.mgl_system.module == 1 or doer.components.mgl_system.module == 2 then
-                local item = doer.components.mgl_system.mgl_mapper
-                if item and item.components.mgl_mapper then
-                    item.components.mgl_mapper.level = 1
-                end
+                -- 将测绘仪等级迁移到人物系统上，统一管理
+                doer.components.mgl_system.mgl_mapper_level = 1
                 doer.components.mgl_system.module = 2
                 inst:Remove()
             end

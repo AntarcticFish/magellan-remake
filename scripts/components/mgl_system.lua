@@ -18,6 +18,8 @@ local Mgl_System = Class(function(self, inst)
     self.d99_lock = false
     self.call_cd = false
     self.uav_type = 1
+    -- 测绘仪等级（移到人物系统上，原先在物品上）
+    self.mgl_mapper_level = 0
     self._task = self.inst:DoPeriodicTask(1, function()
 
         self.mgl_mapper = nil
@@ -660,10 +662,11 @@ function Mgl_System:OnLoad(data)
     self.tool = data.tool or nil
     self.module = data.module or 0
     self.d99_lock = data.d99_lock or false
+    self.mgl_mapper_level = data.mgl_mapper_level or 0
 end
 
 function Mgl_System:OnSave()
-    return { tool = self.tool, module = self.module, uav_type = self.uav_type, d99_lock = self.d99_lock }
+    return { tool = self.tool, module = self.module, uav_type = self.uav_type, d99_lock = self.d99_lock, mgl_mapper_level = self.mgl_mapper_level }
 end
 
 return Mgl_System

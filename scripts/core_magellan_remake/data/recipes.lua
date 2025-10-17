@@ -89,6 +89,22 @@ local data = {
 			image = 'mgl_d99.tex',
 		},
 		filters = {'CHARACTER', 'MODS'}
+	},
+	{
+		recipe_name = 'mgl_mapper_item',
+		ingredients = {
+			Ingredient("moonglass", 5), 
+			Ingredient("goldnugget", 3), 
+			Ingredient("transistor", 2), 
+			Ingredient("trinket_6", 2)
+		},
+		tech = TECH.SCIENCE_TWO,
+		config = {
+			builder_tag = 'mgl',
+			atlas = 'images/inventoryimages/mgl_mapper_item.xml',
+			image = 'mgl_mapper_item.tex',
+		},
+		filters = {'CHARACTER', 'MODS'}
 	}
 }
 
