@@ -14,9 +14,10 @@ local Uav_Brain = Class(Brain, function(self, inst)
 end)
 
 local MIN_FOLLOW_LEADER = 0
-local MAX_FOLLOW_LEADER = 15
 local TARGET_FOLLOW_LEADER = 5
+local MAX_FOLLOW_LEADER = 15
 local AVOID_EXPLOSIVE_DIST = 5
+local MAX_WORK_DIST_FROM_LEADER = 16 -- 无人机工作时与玩家的最大距离
 -- 定义无人机的徘徊时机变量，包括最小等待时间和随机等待时间的范围
 local WANDER_TIMING = {minwaittime = 6, randwaittime = 3}
 
@@ -30,16 +31,18 @@ local function ShouldAvoidExplosive(target)
         or target.components.burnable:IsBurning()
 end
 
-local IsNear = 15
 local SEE_DIST = 15
 
 local function CanWork(inst)
-    return inst.components.follower.leader ~= nil and inst.workable
+    local leader = GetLeader(inst)
+    return leader ~= nil and inst.workable and inst:GetDistanceSqToInst(leader) <= MAX_WORK_DIST_FROM_LEADER * MAX_WORK_DIST_FROM_LEADER
 end
 
 local function FindTree(inst)
-    local target = FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
-        return item.components.growable and item.components.growable:GetStage() >= 2
+    local leader = GetLeader(inst)
+    if not leader then return nil end
+    local target = FindEntity(leader, SEE_DIST, function(item)
+        return item:IsValid() and item.components.growable and item.components.growable:GetStage() >= 2
     end, { "tree", "CHOP_workable"})
     if target ~= nil then
         inst.tree_target = target
@@ -73,74 +76,160 @@ local function FindTreeToChopAction(inst)
     return false
 end
 
-local function PickGrassTwigs(inst)
-    if CanWork(inst) and not inst.sg:HasStateTag("working") and not inst.components.inventory:IsFull() and inst.workable then
-        local target = FindEntity(inst, 3, function(item)
-            return item.components.pickable ~= nil
-                and item.components.pickable:CanBePicked() and item:IsOnValidGround()
-        end)
-
-        if target == nil then
-            target = FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
-                return item.components.pickable ~= nil
-                    and item.components.pickable:CanBePicked() and item:HasTag("pickable") and not item:HasTag("flower")
-            end)
-        end
-        if target ~= nil then
-            return BufferedAction(inst, target, ACTIONS.PICK)
-        end
+local function FindNearestWorkAction(inst)
+    if not CanWork(inst) then
+        return false
     end
-    return false
-end
-
-local function PickUpAction(inst)
-    if CanWork(inst) and not inst.sg:HasStateTag("working") and not inst.components.inventory:IsFull() and inst.workable then
-        local target = FindEntity(inst.components.follower.leader, IsNear, function(item) --搜索周边 没有就搜索其他的位置
-            return item.components.inventoryitem ~= nil and not item.components.health and item:IsOnValidGround()
-        end)
-
-        if target == nil then
-            FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
-                return item.components.inventoryitem ~= nil and not item.components.health and item:IsOnValidGround()
-            end)
-        end
-
-        if target ~= nil then
-            return BufferedAction(inst, target, ACTIONS.PICKUP)
-        end
-    end
-    return false
-end
-
-local function DigStump(inst)
-    if CanWork(inst) and not inst.sg:HasStateTag("working") and inst.workable then
-        local target = FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
-            return item:HasTag("stump")
-        end)
-        if target ~= nil then
-            return BufferedAction(inst, target, ACTIONS.DIG)
-        end
-    end
-    return false
-end
-
-local function FindEntityToWorkAction(inst, action, addtltags) --挖矿
+    -- 如果正在工作中，不执行新的工作
     if inst.sg:HasStateTag("working") then
-        return
+        return false
     end
-
-    -- local target = FindEntity(inst, SEE_DIST,
-    --     function(item) return item.components.workable and item.components.workable.action == action end)
-    local target = FindEntity(inst, SEE_DIST,
-        function(item) return item.components.workable and item.components.workable.action == action end,
-        nil,
-        addtltags,
-        nil,
-        function(a, b) return a:GetDistanceSqToInst(inst) < b:GetDistanceSqToInst(inst) end)
-
-    -- print(inst, action, target)
-    if target then
-        return BufferedAction(inst, target, action)
+    -- 直接收集所有可能的工作目标并按距离排序
+    local possible_actions = {}
+    -- 收集挖矿目标
+    local mine_targets = {}
+    FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
+        if item.components.workable and item.components.workable.action == ACTIONS.MINE then
+            table.insert(mine_targets, item)
+            return true
+        end
+        return false
+    end)
+    for _, target in ipairs(mine_targets) do
+        if target:IsValid() then
+            local action = BufferedAction(inst, target, ACTIONS.MINE)
+            table.insert(possible_actions, {action = action, dist = target:GetDistanceSqToInst(inst)})
+        end
+    end
+    -- 收集砍树目标
+    local tree_targets = {}
+    FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
+        if item:HasTag("tree") and item:HasTag("CHOP_workable") and item.components.growable and item.components.growable:GetStage() >= 2 then
+            table.insert(tree_targets, item)
+            return true
+        end
+        return false
+    end)
+    if inst.tree_target ~= nil then
+        table.insert(tree_targets, inst.tree_target)
+    end
+    for _, target in ipairs(tree_targets) do
+        if target:IsValid() then
+            local action = BufferedAction(inst, target, ACTIONS.CHOP)
+            table.insert(possible_actions, {action = action, dist = target:GetDistanceSqToInst(inst)})
+        end
+    end
+    -- 收集挖树桩目标
+    local stump_targets = {}
+    FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
+        if item:HasTag("stump") then
+            table.insert(stump_targets, item)
+            return true
+        end
+        return false
+    end)
+    for _, target in ipairs(stump_targets) do
+        if target:IsValid() then
+            local action = BufferedAction(inst, target, ACTIONS.DIG)
+            table.insert(possible_actions, {action = action, dist = target:GetDistanceSqToInst(inst)})
+        end
+    end
+    -- 收集拾取物品目标
+    local pickup_targets = {}
+    -- 先收集无人机周围的
+    FindEntity(inst, 3, function(item)
+        if item.components.inventoryitem and not item.components.health and item:IsOnValidGround() then
+            table.insert(pickup_targets, item)
+            return true
+        end
+        return false
+    end)
+    -- 再收集领导者周围的
+    FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
+        if item.components.inventoryitem and not item.components.health and item:IsOnValidGround() then
+            -- 避免重复添加
+            local already_added = false
+            for _, added_item in ipairs(pickup_targets) do
+                if added_item == item then
+                    already_added = true
+                    break
+                end
+            end
+            if not already_added then
+                table.insert(pickup_targets, item)
+            end
+            return true
+        end
+        return false
+    end)
+    for _, target in ipairs(pickup_targets) do
+        if target:IsValid() then
+            local action = BufferedAction(inst, target, ACTIONS.PICKUP)
+            table.insert(possible_actions, {action = action, dist = target:GetDistanceSqToInst(inst)})
+        end
+    end
+    -- 收集采集草和小树枝目标
+    local grass_targets = {}
+    FindEntity(inst, 3, function(item)
+        if item.components.pickable and item:IsOnValidGround() then
+            -- 特殊处理蘑菇：检查是否完全成熟
+            local is_mushroom = item:HasTag("mushroom") or item.prefab and (item.prefab:find("mushroom") ~= nil)
+            if is_mushroom then
+                -- 对于蘑菇，确保它们是完全成熟的（growthstate为3通常表示成熟）
+                if item:IsValid() and item.components.pickable:CanBePicked() and item.components.pickable.caninteractwith then
+                    table.insert(grass_targets, item)
+                    return true
+                end
+            else
+                -- 对于普通可采集物，使用标准检查
+                if item.components.pickable:CanBePicked() then
+                    table.insert(grass_targets, item)
+                    return true
+                end
+            end
+        end
+        return false
+    end)
+    FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
+        if item.components.pickable and item:HasTag("pickable") and not item:HasTag("flower") then
+            -- 特殊处理蘑菇：检查是否完全成熟
+            local is_mushroom = item:HasTag("mushroom") or item.prefab and (item.prefab:find("mushroom") ~= nil)
+            if is_mushroom then
+                -- 对于蘑菇，确保它们是完全成熟的（growthstate为3通常表示成熟）
+                if item:IsValid() and item.components.pickable:CanBePicked() and item.components.pickable.caninteractwith then
+                    return false
+                end
+            else
+                -- 对于普通可采集物，使用标准检查
+                if not item.components.pickable:CanBePicked() then
+                    return false
+                end
+            end
+            -- 避免重复添加
+            local already_added = false
+            for _, added_item in ipairs(grass_targets) do
+                if added_item == item then
+                    already_added = true
+                    break
+                end
+            end
+            if not already_added then
+                table.insert(grass_targets, item)
+            end
+            return true
+        end
+        return false
+    end)
+    for _, target in ipairs(grass_targets) do
+        if target:IsValid() then
+            local action = BufferedAction(inst, target, ACTIONS.PICK)
+            table.insert(possible_actions, {action = action, dist = target:GetDistanceSqToInst(inst)})
+        end
+    end
+    -- 如果有找到工作目标，按距离排序并返回最近的
+    if #possible_actions > 0 then
+        table.sort(possible_actions, function(a, b) return a.dist < b.dist end)
+        return possible_actions[1].action
     end
     return false
 end
@@ -181,20 +270,17 @@ function Uav_Brain:OnStart()
     local root = PriorityNode(
         {
             PriorityNode({
-                WhileNode( --自动挖矿
-                    function()
-                        return not self.inst:HasTag("working") and self.inst.workable
-                    end,
-                    "keep mining",
-                    DoAction(self.inst, function() return FindEntityToWorkAction(self.inst, ACTIONS.MINE) end)),
-                IfThenDoWhileNode(function() return StartChoppingCondition(self.inst) end,
-                    function() return KeepChoppingAction(self.inst) end,
-                    "Chop Tree",
-                    LoopNode
-                    { ChattyNode(self.inst, "SERVANT_CHOP_TREE", DoAction(self.inst, FindTreeToChopAction, "Pick Up", true)) }),
-                ChattyNode(self.inst, "SERVANT_CHOP_TREE", DoAction(self.inst, DigStump, "Dig Stump", true)),
-                ChattyNode(self.inst, "SERVANT_PICKUP", DoAction(self.inst, PickUpAction, "Pick Up", true)),
-                ChattyNode(self.inst, "SERVANT_PICK", DoAction(self.inst, PickGrassTwigs, "Pick Grass And Twigs", true)),
+                -- 执行最近的工作动作
+                WhileNode(function() return CanWork(self.inst) end,
+                    "WorkAction",
+                    DoAction(self.inst, FindNearestWorkAction, "WorkAction", true)),
+
+                -- 砍树行为（循环执行）
+                WhileNode(function() return StartChoppingCondition(self.inst) end,
+                    "KeepChopping",
+                    WhileNode(function() return KeepChoppingAction(self.inst) end,
+                        "KeepChoppingAction",
+                        DoAction(self.inst, FindTreeToChopAction, "ChopTree", true))),
 
                 WhileNode(function()
                         return CanAttack(self.inst)
