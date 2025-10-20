@@ -203,9 +203,13 @@ local function CollectPickupTargets(inst, possible_actions)
     local pickup_targets = {}
     -- 先收集无人机周围的
     FindEntity(inst, 3, function(item)
+        -- 不拾取容器（如背包、箱子等）
+        if item.components.container ~= nil then 
+            return false
+        end
         if item.components.inventoryitem 
-           and not item.components.health 
-           and item:IsOnValidGround() then
+            and not item.components.health 
+            and item:IsOnValidGround() then
             table.insert(pickup_targets, item)
             return true
         end
@@ -214,9 +218,13 @@ local function CollectPickupTargets(inst, possible_actions)
     
     -- 再收集领导者周围的
     FindEntity(inst.components.follower.leader, SEE_DIST, function(item)
+        -- 不拾取容器（如背包、箱子等）
+        if item.components.container ~= nil then 
+            return false
+        end
         if item.components.inventoryitem 
-           and not item.components.health 
-           and item:IsOnValidGround() then
+            and not item.components.health 
+            and item:IsOnValidGround() then
             -- 避免重复添加
             local already_added = false
             for _, added_item in ipairs(pickup_targets) do

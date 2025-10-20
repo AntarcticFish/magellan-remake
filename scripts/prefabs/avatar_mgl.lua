@@ -45,6 +45,10 @@ local function OnPlayerDespawn(inst, data)
 		inst.components.mgl_system:RemoveFollower()
 	end
 end
+
+local function onuavkilled(inst, data)
+	inst:PushEvent("killed", { victim = data.victim, attacker = data.attacker })
+end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 local function onload(inst,data)
@@ -53,6 +57,8 @@ local function onload(inst,data)
 	inst:ListenForEvent('player_despawn', OnPlayerDespawn)
 	--ms_playerdisconnected 
 	inst:ListenForEvent('ms_playerdisconnected', OnPlayerDespawn)
+	--无人机击杀算作麦哲伦击杀
+	inst:ListenForEvent('killed_magellan_remake_participate', onuavkilled)
 	
 
 

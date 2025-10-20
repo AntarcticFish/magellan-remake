@@ -21,6 +21,12 @@ function (self)
                 victim._magellan_remake_participate_kill_tbl = {}
             end
             victim._magellan_remake_participate_kill_tbl[attacker] = true
+            if attacker:HasTag("uav") and attacker.components.follower and attacker.components.follower.leader then
+                local leader = attacker.components.follower.leader
+                if leader:IsValid() then
+                    victim._magellan_remake_participate_kill_tbl[leader] = true
+                end
+            end
         end
         return old_GetAttacked ~= nil and old_GetAttacked(self,attacker,damage,weapon,stimuli,spdamage,...) or nil
     end
