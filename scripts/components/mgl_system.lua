@@ -108,7 +108,7 @@ function Mgl_System:OnRemoveFromEntity()
     end
 end
 
-
+local exclude_tags = { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav", "playerghost", "companion", "rider"}
 
 local function onhit(inst, target, damage, stimuli, weapon, damageresolved, spdamage, damageredirecttarget)
     if target and not inst.aoe_processing then
@@ -116,7 +116,6 @@ local function onhit(inst, target, damage, stimuli, weapon, damageresolved, spda
             inst.aoe_processing = true
             inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavlaser_skill")
             -- 使用官方DoAreaAttack函数替代自定义实现
-            local exclude_tags = { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" }
             inst.components.combat:DoAreaAttack(inst, 2, nil, nil, stimuli, exclude_tags)
             inst.aoe_processing = false
         end
@@ -126,7 +125,6 @@ end
 
 local function onhitother(inst, target, damage, stimuli, weapon, damageresolved, spdamage, damageredirecttarget)
     if target and not inst.aoe_processing then
-        local exclude_tags = { "player", "wall", "INLIMBO", "notarget", "invisible", "noattack", "uav" }
         
         inst.aoe_processing = true
         if inst.aoe then
