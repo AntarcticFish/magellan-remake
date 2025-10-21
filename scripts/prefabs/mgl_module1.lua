@@ -9,7 +9,12 @@ local function useitem(inst, doer, item)
             if doer.components.mgl_system.module == 0 then
                 doer.components.mgl_system.module = 1
                 inst:Remove()
-            elseif doer.components.mgl_system.module > 0 then
+            elseif doer.components.mgl_system.module == 1 then
+                doer.components.talker:Say(STRINGS.MGL_USEANOFF)
+            elseif doer.components.mgl_system.module == 2 then
+                doer.components.mgl_system.module = 3
+                inst:Remove()
+            elseif doer.components.mgl_system.module == 3 then
                 doer.components.talker:Say(STRINGS.MGL_USEANOFF)
             end
         end

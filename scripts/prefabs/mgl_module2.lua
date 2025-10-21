@@ -7,13 +7,18 @@ local function useitem(inst, doer, item)
     if doer and doer.components.mgl_level:GetMglLevel() ==2 then
         if doer and doer.components.mgl_system then
             if doer.components.mgl_system.module == 0 then
-                doer.components.talker:Say(STRINGS.MGL_MUST_LEVEL2)
-                return
-            elseif doer.components.mgl_system.module == 1 or doer.components.mgl_system.module == 2 then
-                -- 将测绘仪等级迁移到人物系统上，统一管理
-                doer.components.mgl_system.mgl_mapper_level = 1
                 doer.components.mgl_system.module = 2
+                doer.components.mgl_system.mgl_mapper_level = 1
                 inst:Remove()
+            elseif doer.components.mgl_system.module == 1 then
+                doer.components.mgl_system.module = 3
+                doer.components.mgl_system.mgl_mapper_level = 1
+                inst:Remove()
+            -- 允许重复使用模块2
+            elseif doer.components.mgl_system.module == 2 then
+                doer.components.talker:Say(STRINGS.MGL_USEANOFF)
+            elseif doer.components.mgl_system.module == 3 then
+                doer.components.talker:Say(STRINGS.MGL_USEANOFF)
             end
         end
     else

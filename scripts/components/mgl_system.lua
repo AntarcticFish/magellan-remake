@@ -387,7 +387,7 @@ function Mgl_System:CallUav()
             if self.uav_type == 1 or self.uav_type == 2 or self.uav_type == 3 then
                 uav.attack = true
                 if self.uav_type == 2 then
-                    local moredamage = self.module >= 1 and 9 or 0
+                    local moredamage = (self.module == 1 or self.module >= 3) and 9 or 0
                     uav:AddComponent("planardamage")
                     uav.components.combat.onhitotherfn = onhit 
                     uav.components.combat:SetRange(1,2)
@@ -396,7 +396,7 @@ function Mgl_System:CallUav()
                     uav.components.combat:SetDefaultDamage((mode[mgl_level] + moredamage))
                     EquipWeapon(uav,"mgl_uav_lrbd_charge")
                 elseif self.uav_type == 3 then
-                    local moredamage = self.module >= 1 and 15 or 0
+                    local moredamage = (self.module == 1 or self.module >= 3) and 15 or 0
                     uav.components.combat.onhitotherfn = onhitother
                     uav.components.combat:SetRange(6,12)
                     uav.components.combat:SetAttackPeriod(2.3) -- 攻击间隔
@@ -409,7 +409,7 @@ function Mgl_System:CallUav()
                     uav.components.combat:SetAttackPeriod(3)
                     uav.components.combat:SetRange(5,10)
                     uav.components.combat:SetDefaultDamage(0)
-                    if self.module >= 1 then
+                    if (self.module == 1 or self.module >= 3) then
                         --无人机附近的玩家不会过热
                         uav._moudle_task = uav:DoPeriodicTask(1, function()
                             local x, y, z = uav.Transform:GetWorldPosition()
@@ -499,7 +499,7 @@ function Mgl_System:UseSkill()
         if type(task.cd) ~= "number" then
             cd = task.cd[mgl_level]
         end
-        if self.uav_type == 4 and self.module >=1 then
+        if self.uav_type == 4 and (self.module == 1 or self.module >= 3) then
             cd = cd - 15
         end
         self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_skill_start")
