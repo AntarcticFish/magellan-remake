@@ -18,6 +18,7 @@ local MglResearchShopPanel = Class(Screen, function(self, owner)
     self.root:SetVAnchor(ANCHOR_MIDDLE)
     self.root:SetHAnchor(ANCHOR_MIDDLE)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
+    self.root:SetMaxPropUpscale(MAX_HUD_SCALE)
     --添加一个背景
     self.bg = self.root:AddChild(Image("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
     self.bg:SetSize(900, 600)

@@ -38,6 +38,10 @@ local function onbecameghost(inst, data)
 	if inst.components.mgl_system then
 		inst.components.mgl_system:RemoveFollower()
 	end
+	-- 死亡音效
+	if SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_zoumadeng_sound") and inst and inst:IsValid() and inst.SoundEmitter and inst:HasTag("mgl") then
+		inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/zoumadeng")
+	end
 end
 
 local function OnPlayerDespawn(inst, data)

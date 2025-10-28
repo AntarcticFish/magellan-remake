@@ -15,6 +15,7 @@ local mgl_widget =
         self:SetHAnchor(0)
         self:SetVAnchor(0)
         self:SetScaleMode(SCALEMODE_PROPORTIONAL)
+        self:SetMaxPropUpscale(MAX_HUD_SCALE)
         self:SetScale(1, 1, 1)
 
         self.image = self:AddChild(Image())

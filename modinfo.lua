@@ -34,6 +34,11 @@ local LANGS = {
                 {'2x',2},
                 {'2.25x',2.25},
                 {'2.5x(默认)',2.5}
+            }},
+            {'奇怪小功能'},
+            {modid..'_enable_zoumadeng_sound','死亡走马灯音效','音频作者B站：DJG杰哥',false,{
+                {'禁用',false},
+                {'启用',true}
             }}
         }
     },
@@ -71,6 +76,11 @@ local LANGS = {
                 {'2x',2},
                 {'2.25x',2.25},
                 {'2.5x(Default)',2.5}
+            }},
+            {'Strange little Function'},
+            {modid..'_enable_zoumadeng_sound','Death Sound Effect','Audio author on Bilibili: DJG杰哥',false,{
+                {'Disabled',false},
+                {'Enabled',true}
             }}
         }
     },
@@ -80,7 +90,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.8'
+version = '1.0.9'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10
