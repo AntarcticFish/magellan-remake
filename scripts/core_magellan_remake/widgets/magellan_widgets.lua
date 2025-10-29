@@ -65,14 +65,14 @@ local mgl_widget =
         --冷却灰色覆盖
         self.skill_image_grey = self:AddChild(Image("images/inventoryimages/mgl_skill_grey.xml", "mgl_skill_grey.tex"))
         self.skill_image_grey:SetScale(0.8)
+        self.skill_image_grey:SetTint(1, 1, 1, 0.9)
         self.skill_image_grey:SetPosition(35, 0, 0) -- 设置在召唤和回收按钮之间
         self.skill_image_grey:SetClickable(false)
         self.skill_image_grey:Hide() -- 默认隐藏
         
         -- 技能冷却时间文本
         self.skill_cooldown_text = self:AddChild(Text(NUMBERFONT, 50))
-        self.skill_cooldown_text:SetPosition(38, -25, 0)
-        self.skill_cooldown_text:SetColour(1, 1, 1, 1) -- 设置为白色
+        self.skill_cooldown_text:SetPosition(38, 0, 0)
         self.skill_cooldown_text:SetScale(0.8)
         self.skill_cooldown_text:SetString(0)
         self.skill_cooldown_text:Hide() -- 默认隐藏
@@ -101,13 +101,14 @@ local mgl_widget =
         --冷却灰色覆盖
         self.call_uav_button_grey = self:AddChild(Image("images/inventoryimages/mgl_calluav_grey.xml", "mgl_calluav_grey.tex"))
         self.call_uav_button_grey:SetScale(0.8)
+        self.call_uav_button_grey:SetTint(1, 1, 1, 0.9)
         self.call_uav_button_grey:SetPosition(-35, 0, 0) -- 设置在召唤和回收按钮之间
         self.call_uav_button_grey:SetClickable(false)
         self.call_uav_button_grey:Hide() -- 默认隐藏
         
         -- 召唤冷却时间文本
         self.call_cooldown_text = self:AddChild(Text(NUMBERFONT, 50))
-        self.call_cooldown_text:SetPosition(-32, -25, 0)
+        self.call_cooldown_text:SetPosition(-32, 0, 0)
         self.call_cooldown_text:SetColour(1, 1, 1, 1) -- 设置为白色
         self.call_cooldown_text:SetScale(0.8)
         self.call_cooldown_text:SetString(0)
@@ -150,18 +151,34 @@ function mgl_widget:LoadPosition()
         if self.owner.skill_cooldown:value() > 0 then
             self.skill_image_grey:Show()
             self.skill_cooldown_text:Show()
+            self.skill_image:SetClickable(false)
+            -- 冷却灰色遮盖，随时间减小覆盖
+            local cd = self.owner.skill_cooldown:value()
+            local max = self.owner.skill_cooldown_max:value()
+            local progress = 0
+            if cd >= max then
+                progress = 1
+            else
+                progress = cd / max
+            end
+            self.skill_image_grey:SetScale(0.8, progress * 0.8, 0.8)
         else
+            self.skill_image:SetClickable(true)
             self.skill_image_grey:Hide()
             self.skill_cooldown_text:Hide()
         end
     end)
     self.owner:ListenForEvent("call_cooldown", function(inst, data)
         self.call_cooldown_text:SetString(self.owner.call_cooldown:value())
-        if self.owner.call_cooldown:value() > 0 then
+        if self.owner.call_cooldown:value() > 0 and not self.is_hidden then
+            self.call_uav_button:SetClickable(false)
             self.call_uav_button_grey:Show()
             self.call_cooldown_text:Show()
             -- 冷却灰色遮盖，随时间减小覆盖
+            local progress = (self.owner.call_cooldown:value() / 10) * 0.8
+            self.call_uav_button_grey:SetScale(0.8, progress, 0.8)
         else
+            self.call_uav_button:SetClickable(true)
             self.call_uav_button_grey:Hide()
             self.call_cooldown_text:Hide()
         end
@@ -238,15 +255,17 @@ function mgl_widget:ToggleVisibility()
         self.call_uav_button:Hide()
         self.recall_uav_button:Hide()
         self.call_cooldown_text:Hide()
-        self.skill_cooldown_text:SetPosition(-102, -25, 0)
+        self.call_uav_button_grey:Hide()
+        self.skill_cooldown_text:SetPosition(-102, 0, 0)
+        self.skill_image_grey:SetPosition(-105, 0, 0)
         self.skill_image:SetPosition(-105, 0, 0)
     else
         -- 显示状态：恢复原始位置
         self.change_uav_button:Show()
         self.call_uav_button:Show()
         self.recall_uav_button:Show()
-        self.call_cooldown_text:Show()
-        self.skill_cooldown_text:SetPosition(38, -25, 0)
+        self.skill_cooldown_text:SetPosition(38, 0, 0)
+        self.skill_image_grey:SetPosition(35, 0, 0)
         self.skill_image:SetPosition(35, 0, 0)    -- 保持在中间位置
     end
 end

@@ -10,6 +10,10 @@ local function OnCallCoolDownUpdate(self, call_cooldown)
     self.inst.call_cooldown:set(call_cooldown)
 end
 
+local function OnSkillCoolDownMaxUpdate(self, skill_cooldown_max)
+    self.inst.skill_cooldown_max:set(skill_cooldown_max)
+end
+
 
 
 local Mgl_System = Class(function(self, inst)
@@ -30,6 +34,7 @@ local Mgl_System = Class(function(self, inst)
     self.uav_type = 1
     self.skill_cooldown = 0
     self.call_cooldown = 0
+    self.skill_cooldown_max = 1
     -- 测绘仪等级（移到人物系统上，原先在物品上）
     self.mgl_mapper_level = 0
     self._task = self.inst:DoPeriodicTask(1, function()
@@ -102,6 +107,7 @@ end, nil, {
     uav_type = OnUpdate,
     skill_cooldown = OnSkillCoolDownUpdate,
     call_cooldown = OnCallCoolDownUpdate,
+    skill_cooldown_max = OnSkillCoolDownMaxUpdate,
 })
 
 function Mgl_System:OnRemoveFromEntity()
@@ -663,6 +669,7 @@ function Mgl_System:UseSkill()
         self.fx = fx
         
         self.mgl_uav_item.components.rechargeable:Discharge(cd + task.tasktime)
+        self.skill_cooldown_max = cd + task.tasktime
         self.skill_cooldown = cd + task.tasktime
 
         self.task = self.inst:DoPeriodicTask(1, function()
@@ -675,6 +682,7 @@ function Mgl_System:UseSkill()
             self.skill_cooldown = self.skill_cooldown - 1
             if self.skill_cooldown <= 0 then
                 self.skill_cooldown = 0
+                self.skill_cooldown_max = 0
                 self.skill_cooldown_task:Cancel()
                 self.skill_cooldown_task = nil
             end

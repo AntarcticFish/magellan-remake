@@ -98,6 +98,8 @@ local common_postinit = function(inst)
 	inst.skill_cooldown:set(0)
 	inst.call_cooldown = net_smallbyte(inst.GUID, "call_cooldown", "call_cooldown")
 	inst.call_cooldown:set(0)
+	inst.skill_cooldown_max = net_smallbyte(inst.GUID, "skill_cooldown_max", "skill_cooldown_max")
+	inst.skill_cooldown_max:set(1)
 	inst.MiniMapEntity:SetIcon(avatar_name..'.tex')
 end
 
