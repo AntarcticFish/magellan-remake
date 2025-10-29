@@ -66,6 +66,7 @@ STRINGS.CHARACTERS.MGL.DESCRIBE.MGL_MODULE2 = "Drone Control Module.P"
 STRINGS.MGL_UAV_IS_MAX = "UAV placement limit has been reached"
 STRINGS.MGL_POWER_LOW = "Low power!"
 STRINGS.MGL_SKILLCDING = "Skill is cooling down..."
+STRINGS.MGL_FOLLOWER_NIL = "No drone is following you!"
 
 STRINGS.CHANGE_UAV_ERROR = "Drones are not empty! Cannot switch"
 
@@ -87,4 +88,12 @@ STRINGS.MGL_UAV = {
     [2] = "LRBD",
     [3] = "66",
     [4] = "YHLY",
+}
+
+STRINGS.SKILL_UI = {
+    [1] = "Hide/Show UI",
+    [2] = "Use Drone Skill\nRightClick to Drag",
+    [3] = "Change Drone Type\nRightClick to Drag",
+    [4] = "Call Drone\nRightClick to Drag",
+    [5] = "Recall Drone\nRightClick to Drag",
 }

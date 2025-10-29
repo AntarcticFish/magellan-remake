@@ -8,6 +8,19 @@ local assets = {
 	Asset('ANIM', 'anim/'..avatar_name..'.zip'),
 	Asset('ANIM', 'anim/ghost_'..avatar_name..'_build.zip'),
 	Asset("ANIM", "anim/mgl_act.zip"),
+	Asset("ATLAS", "images/inventoryimages/mgl_hidden.xml"),
+	Asset("ATLAS", "images/inventoryimages/mgl_changeuav.xml"),
+	Asset("ATLAS", "images/inventoryimages/mgl_calluav.xml"),
+	Asset("ATLAS", "images/inventoryimages/mgl_callbackuav.xml"),
+	Asset("ATLAS", "images/inventoryimages/mgl_skill_grey.xml"),
+	Asset("ATLAS", "images/inventoryimages/mgl_calluav_grey.xml"),
+	Asset("IMAGE", "images/inventoryimages/mgl_changeuav.tex"),
+	Asset("IMAGE", "images/inventoryimages/mgl_calluav.tex"),
+	Asset("IMAGE", "images/inventoryimages/mgl_callbackuav.tex"),
+	Asset("IMAGE", "images/inventoryimages/mgl_hidden.tex"),
+	Asset("IMAGE", "images/inventoryimages/mgl_skill_grey.tex"),
+	Asset("IMAGE", "images/inventoryimages/mgl_calluav_grey.tex"),
+
 }
 
 local prefabs = {}
@@ -24,6 +37,7 @@ for k,v in pairs(TUNING.MGL_CUSTOM_START_INV) do
 end
 for k = 1, 4 do
     table.insert(assets, Asset("ATLAS", "images/inventoryimages/mgl_skill" .. k .. ".xml"))
+	table.insert(assets, Asset("IMAGE", "images/inventoryimages/mgl_skill" .. k .. ".tex"))
 end
 
 prefabs = FlattenTree({ prefabs, start_inv }, true)
@@ -78,8 +92,12 @@ end
 local common_postinit = function(inst)
 	inst:AddTag(avatar_name)
 	inst:AddTag('sami_player')
-	inst.uav_type = net_smallbyte(inst.GUID, "uav_type")
+	inst.uav_type = net_smallbyte(inst.GUID, "uav_type", "uav_type")
 	inst.uav_type:set(1)
+	inst.skill_cooldown = net_smallbyte(inst.GUID, "skill_cooldown", "skill_cooldown")
+	inst.skill_cooldown:set(0)
+	inst.call_cooldown = net_smallbyte(inst.GUID, "call_cooldown", "call_cooldown")
+	inst.call_cooldown:set(0)
 	inst.MiniMapEntity:SetIcon(avatar_name..'.tex')
 end
 

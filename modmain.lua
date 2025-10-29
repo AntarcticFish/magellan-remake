@@ -170,3 +170,28 @@ AddPenguinInspectSound("mutated_penguin") -- 月岩企鹅
 --         player.components.mgl_task_system:BuyShopItem(player, item_id)
 --     end
 -- end)
+
+-- 注册UI按钮相关的RPC函数
+AddModRPCHandler(modid, "UseSkill", function(player) 
+    if player and player:IsValid() and player.components and player.components.mgl_system then 
+        player.components.mgl_system:UseSkill() 
+    end 
+end)
+
+AddModRPCHandler(modid, "ChangeUav", function(player) 
+    if player and player:IsValid() and player.components and player.components.mgl_system then 
+        player.components.mgl_system:ChangeUav() 
+    end 
+end)
+
+AddModRPCHandler(modid, "CallUav", function(player) 
+    if player and player:IsValid() and player.components and player.components.mgl_system then 
+        player.components.mgl_system:CallUav() 
+    end 
+end)
+
+AddModRPCHandler(modid, "RecallUav", function(player) 
+    if player and player:IsValid() and player.components and player.components.mgl_system then 
+        player.components.mgl_system:RemoveFollower() 
+    end 
+end)

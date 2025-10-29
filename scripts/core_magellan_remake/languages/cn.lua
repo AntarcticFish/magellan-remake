@@ -78,6 +78,7 @@ STRINGS.RECIPE_DESC.MGL_SCIENCE_TERMINAL = "联合科考终端"
 STRINGS.MGL_UAV_IS_MAX = "无人机已达到放置上限"
 STRINGS.MGL_POWER_LOW = "电力不足！"
 STRINGS.MGL_SKILLCDING = "技能正在冷却当中..."
+STRINGS.MGL_FOLLOWER_NIL = "当前没有无人机！"
 
 STRINGS.CHANGE_UAV_ERROR = "无人机不为空！无法切换"
 
@@ -93,6 +94,14 @@ STRINGS.MGL_UAV = {
     [2] = "LRBD",
     [3] = "66",
     [4] = "YHLY",
+}
+
+STRINGS.SKILL_UI = {
+    [1] = "隐藏/显示UI",
+    [2] = "使用无人机技能\n右键拖拽",
+    [3] = "切换无人机类型\n右键拖拽",
+    [4] = "召唤无人机\n右键拖拽",
+    [5] = "召回无人机\n右键拖拽",
 }
 
 

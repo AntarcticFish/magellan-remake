@@ -2,6 +2,16 @@ local function OnUpdate(self, uav_type)
     self.inst.uav_type:set(uav_type)
 end
 
+local function OnSkillCoolDownUpdate(self, skill_cooldown)
+    self.inst.skill_cooldown:set(skill_cooldown)
+end
+
+local function OnCallCoolDownUpdate(self, call_cooldown)
+    self.inst.call_cooldown:set(call_cooldown)
+end
+
+
+
 local Mgl_System = Class(function(self, inst)
     self.inst = inst
     self.tool = nil
@@ -18,6 +28,8 @@ local Mgl_System = Class(function(self, inst)
     self.d99_lock = false
     self.call_cd = false
     self.uav_type = 1
+    self.skill_cooldown = 0
+    self.call_cooldown = 0
     -- 测绘仪等级（移到人物系统上，原先在物品上）
     self.mgl_mapper_level = 0
     self._task = self.inst:DoPeriodicTask(1, function()
@@ -88,6 +100,8 @@ local Mgl_System = Class(function(self, inst)
     end)
 end, nil, {
     uav_type = OnUpdate,
+    skill_cooldown = OnSkillCoolDownUpdate,
+    call_cooldown = OnCallCoolDownUpdate,
 })
 
 function Mgl_System:OnRemoveFromEntity()
@@ -351,6 +365,7 @@ function Mgl_System:CallUav()
         end
         if item.components.finiteuses:GetPercent() > 0.2 and not self.call_cd then
             self.call_cd = true
+            self.call_cooldown = 10
 
             local uav = SpawnPrefab("mgl_uav")
             local pt = self.inst:GetPosition()
@@ -438,12 +453,15 @@ function Mgl_System:CallUav()
 
             table.insert(self.follower, uav)
 
-            self.inst:DoTaskInTime(
-                10,
-                function()
+            self.call_cooldown_task = self.inst:DoPeriodicTask(1, function()
+                self.call_cooldown = self.call_cooldown - 1
+                if self.call_cooldown <= 0 then
+                    self.call_cooldown = 0
                     self.call_cd = false
+                    self.call_cooldown_task:Cancel()
+                    self.call_cooldown_task = nil
                 end
-            )
+            end)
         else
             if self.call_cd then
                 self.inst.components.talker:Say(STRINGS.MGL_SKILLCDING)
@@ -645,14 +663,28 @@ function Mgl_System:UseSkill()
         self.fx = fx
         
         self.mgl_uav_item.components.rechargeable:Discharge(cd + task.tasktime)
+        self.skill_cooldown = cd + task.tasktime
+
         self.task = self.inst:DoPeriodicTask(1, function()
             time = time + 1
             if time >= task.tasktime then
                 self:RemoveFollower()
             end
         end)
+        self.skill_cooldown_task = self.inst:DoPeriodicTask(1, function()
+            self.skill_cooldown = self.skill_cooldown - 1
+            if self.skill_cooldown <= 0 then
+                self.skill_cooldown = 0
+                self.skill_cooldown_task:Cancel()
+                self.skill_cooldown_task = nil
+            end
+        end)
     else
-        self.inst.components.talker:Say(STRINGS.MGL_SKILLCDING)
+        if self.follower == nil or #self.follower <= 0 then
+            self.inst.components.talker:Say(STRINGS.MGL_FOLLOWER_NIL)
+        else
+            self.inst.components.talker:Say(STRINGS.MGL_SKILLCDING)
+        end
     end
 end
 
