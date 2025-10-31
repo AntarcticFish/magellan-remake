@@ -67,6 +67,24 @@ end
 local function onuavkilled(inst, data)
 	inst:PushEvent("killed", { victim = data.victim, attacker = data.attacker })
 end
+
+local function on_dismount(inst, data)
+	local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+	if item and item:HasTag("mgl_mapper_item") then
+	    if inst:HasTag("player") and inst.components.combat and inst.components.combat.SetAtkPeriodModifier then
+        	inst.components.combat:SetAtkPeriodModifier(item, (0.8 / 1.6), "dstlan_atkperiod_mgl_mapper_item")
+    	end
+	end
+end
+
+local function on_mount(inst, data)
+	local item = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+	if item and item:HasTag("mgl_mapper_item") then
+		if inst:HasTag("player") and inst.components.combat and inst.components.combat.RemoveAtkPeriodModifier then
+			inst.components.combat:RemoveAtkPeriodModifier(item, "dstlan_atkperiod_mgl_mapper_item")
+		end
+	end
+end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 local function onload(inst,data)
@@ -77,7 +95,8 @@ local function onload(inst,data)
 	inst:ListenForEvent('ms_playerdisconnected', OnPlayerDespawn)
 	--无人机击杀算作麦哲伦击杀
 	inst:ListenForEvent('killed_magellan_remake_participate', onuavkilled)
-	
+	inst:ListenForEvent("dismounted", on_dismount)
+    inst:ListenForEvent("mounted", on_mount)
 
 
 	if inst:HasTag('playerghost') then
