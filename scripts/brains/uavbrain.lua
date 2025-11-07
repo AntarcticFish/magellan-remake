@@ -208,6 +208,7 @@ local function CollectPickupTargets(inst, possible_actions)
             return false
         end
         if item.components.inventoryitem 
+            and item.components.inventoryitem.canbepickedup
             and not item.components.health 
             and item:IsOnValidGround() then
             table.insert(pickup_targets, item)
@@ -223,6 +224,7 @@ local function CollectPickupTargets(inst, possible_actions)
             return false
         end
         if item.components.inventoryitem 
+            and item.components.inventoryitem.canbepickedup
             and not item.components.health 
             and item:IsOnValidGround() then
             -- 避免重复添加
