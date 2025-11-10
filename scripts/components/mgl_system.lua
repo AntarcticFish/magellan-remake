@@ -401,6 +401,9 @@ function Mgl_System:CallUav()
             --     uav.components.follower:SetLeader(self.inst)
             -- end
             uav.components.follower:SetLeader(self.inst)
+            --无人机编号
+            uav.mgl_uav_type = self.uav_type
+            uav.mgl_uav_id = #self.follower + 1
             if self.uav_type == 4 then
                 uav.components.container.canbeopened = true
             end
@@ -433,6 +436,13 @@ function Mgl_System:CallUav()
                     if (self.module == 1 or self.module >= 3) then
                         --无人机附近的玩家不会过热
                         uav._moudle_task = uav:DoPeriodicTask(1, function()
+                            --设置麦哲伦不会过热
+                            if self.inst.components.temperature ~= nil then
+                                local newtemp = math.min(self.inst.components.temperature:GetCurrent(), 63)
+                                if newtemp < self.inst.components.temperature:GetCurrent() then
+                                    self.inst.components.temperature:SetTemperature(newtemp)
+                                end
+                            end
                             local x, y, z = uav.Transform:GetWorldPosition()
                             -- 寻找并处理领域内的实体
                             for i, v in ipairs(TheSim:FindEntities(x, 0, z, 6, nil, NOTAGS, FREEZETARGET_ONEOF_TAGS)) do
