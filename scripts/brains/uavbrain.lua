@@ -171,7 +171,9 @@ local function CollectMineTargets(inst, possible_actions, ignorethese)
             return false
         end
         
-        if item.components.workable and item.components.workable.action == ACTIONS.MINE then
+        if item.components.workable
+            and item.components.workable:CanBeWorked()
+            and item:HasTag("MINE_workable") then
             table.insert(mine_targets, item)
             return true
         end
@@ -205,8 +207,8 @@ local function CollectTreeTargets(inst, possible_actions, ignorethese)
         
         if item:HasTag("tree") 
            and item:HasTag("CHOP_workable") 
-           and item.components.growable 
-           and item.components.growable:GetStage() >= 2 then
+           and item.components.workable
+           and item.components.workable:CanBeWorked() then
             table.insert(tree_targets, item)
             return true
         end
@@ -242,7 +244,10 @@ local function CollectStumpTargets(inst, possible_actions, ignorethese)
             return false
         end
         
-        if item:HasTag("stump") then
+        if item:HasTag("stump")
+            and item:HasTag("DIG_workable")
+            and item.components.workable 
+            and item.components.workable:CanBeWorked() then
             table.insert(stump_targets, item)
             return true
         end

@@ -23,7 +23,7 @@ local function Attack_Freezing(inst)
         fx.AnimState:PushAnimation("fx1_pst")
         fx.entity:SetParent(inst.entity)
         -- 播放技能音效
-        inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze_skill")
+        inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze_skill", nil, SUGAR_magellan_remake:getModConfigDataFromTUNING("_uav_hit_volume") or 0.5)
         if inst.fx == nil then
             inst.fx = fx
         end

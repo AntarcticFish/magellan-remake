@@ -35,6 +35,33 @@ local LANGS = {
                 {'2.25x',2.25},
                 {'2.5x(默认)',2.5}
             }},
+            {'技能相关音效'},
+            {modid..'_player_skill_volume','人物技能语音音量','人物技能语音音量',0.5,{
+                {'0%',0},
+                {'10%',0.1},
+                {'20%',0.2},
+                {'30%',0.3},
+                {'40%',0.4},
+                {'50%(默认)',0.5},
+                {'60%',0.6},
+                {'70%',0.7},
+                {'80%',0.8},
+                {'90%',0.9},
+                {'100%',1}
+            }},
+            {modid..'_uav_hit_volume','无人机攻击命中音量','无人机攻击命中音量',0.5,{
+                {'0%',0},
+                {'10%',0.1},
+                {'20%',0.2},
+                {'30%',0.3},
+                {'40%',0.4},
+                {'50%(默认)',0.5},
+                {'60%',0.6},
+                {'70%',0.7},
+                {'80%',0.8},
+                {'90%',0.9},
+                {'100%',1}
+            }},
             {'奇怪小功能'},
             {modid..'_enable_zoumadeng_sound','死亡走马灯音效','音频作者B站：DJG杰哥',false,{
                 {'禁用',false},
@@ -77,6 +104,33 @@ local LANGS = {
                 {'2.25x',2.25},
                 {'2.5x(Default)',2.5}
             }},
+            {'Skill Related Sound'},
+            {modid..'_player_skill_volume','Character Skill Voice Volume','Character skill voice volume',0.5,{
+                {'0%',0},
+                {'10%',0.1},
+                {'20%',0.2},
+                {'30%',0.3},
+                {'40%',0.4},
+                {'50%(Default)',0.5},
+                {'60%',0.6},
+                {'70%',0.7},
+                {'80%',0.8},
+                {'90%',0.9},
+                {'100%',1}
+            }},
+            {modid..'_uav_hit_volume','Drone attack hit Volume','Drone attack hit volume',0.5,{
+                {'0%',0},
+                {'10%',0.1},
+                {'20%',0.2},
+                {'30%',0.3},
+                {'40%',0.4},
+                {'50%(Default)',0.5},
+                {'60%',0.6},
+                {'70%',0.7},
+                {'80%',0.8},
+                {'90%',0.9},
+                {'100%',1}
+            }},
             {'Strange little Function'},
             {modid..'_enable_zoumadeng_sound','Death Sound Effect','Audio author on Bilibili: DJG杰哥',false,{
                 {'Disabled',false},
@@ -90,7 +144,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.13'
+version = '1.0.14'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10

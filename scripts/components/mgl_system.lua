@@ -134,7 +134,7 @@ local function onhit(inst, target, damage, stimuli, weapon, damageresolved, spda
     if target and not inst.aoe_processing then
         if inst.aoe then
             inst.aoe_processing = true
-            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavlaser_skill")
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_atk_uavlaser_skill", nil, SUGAR_magellan_remake:getModConfigDataFromTUNING("_uav_hit_volume") or 0.5)
             -- 使用官方DoAreaAttack函数替代自定义实现
             inst.components.combat:DoAreaAttack(inst, 2, nil, nil, stimuli, exclude_tags)
             inst.aoe_processing = false
@@ -148,11 +148,11 @@ local function onhitother(inst, target, damage, stimuli, weapon, damageresolved,
         
         inst.aoe_processing = true
         if inst.aoe then
-            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit_skill")
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit_skill", nil, SUGAR_magellan_remake:getModConfigDataFromTUNING("_uav_hit_volume") or 0.5)
             -- 使用官方DoAreaAttack函数，范围3
             inst.components.combat:DoAreaAttack(target, 4, nil, nil, stimuli, exclude_tags)
         else
-            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit")
+            inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_imp_uavvolley_hit", nil, SUGAR_magellan_remake:getModConfigDataFromTUNING("_uav_hit_volume") or 0.5)
             -- 使用官方DoAreaAttack函数，范围2
             inst.components.combat:DoAreaAttack(target, 3, nil, nil, stimuli, exclude_tags)
         end
@@ -536,12 +536,13 @@ function Mgl_System:UseSkill()
         if self.uav_type == 4 and (self.module == 1 or self.module >= 3) then
             cd = cd - 15
         end
-        self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_skill_start")
-        self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_voice_skill")
+        local player_volume = SUGAR_magellan_remake:getModConfigDataFromTUNING("_player_skill_volume") or 0.5
+        self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_skill_start", nil, player_volume)
+        self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/mgl_voice_skill", nil, player_volume)
         if self.uav_type == 1 then
             -- 每秒减速玩家周围的敌人
             self.skill_task_one = self.inst:DoPeriodicTask(3,function()
-                self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze_skill")
+                self.inst.SoundEmitter:PlaySound("mgl_audio/mgl_audio/p_field_uavfreeze_skill", nil, SUGAR_magellan_remake:getModConfigDataFromTUNING("_uav_hit_volume") or 0.5)
                 if self.inst and self.inst:IsValid() then
                     -- 获取玩家周围的敌人
                     local x, y, z = self.inst.Transform:GetWorldPosition()
