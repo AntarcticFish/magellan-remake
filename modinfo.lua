@@ -157,9 +157,10 @@ all_clients_require_mod = true -- 服务端/所有端模组
 -- server_only_mod = true -- 仅服务端模组
 -- client_only_mod = true -- 仅客户端模组
 server_filter_tags = {
-    "明日方舟麦哲伦",
     "明日方舟",
     "麦哲伦",
+    "Arknights",
+    "Magallan",
 } -- 创意工坊模组分类标签
 icon_atlas = 'modicon.xml' -- 图集
 icon = 'modicon.tex' -- 图标
