@@ -87,9 +87,22 @@ local function ApplyDataToTaskItem(context, widget, data, index)
     
     widget:Show()
     widget.data = data
+    widget.index = index
     
     -- 设置任务标题
     widget.title:SetString(data.title)
+    
+    -- 高亮显示当前选中的任务
+    local panel = TheFrontEnd:GetActiveScreen()
+    if panel and panel.current_task and data.id == panel.current_task.id then
+        -- 选中状态：蓝色背景，黄色文字
+        widget.bg:SetTint(0.2, 0.3, 0.5, 0.8) -- 深蓝色背景
+        widget.title:SetColour(1, 0.9, 0.4, 1) -- 黄色文字
+    else
+        -- 未选中状态：默认灰色背景和文字
+        widget.bg:SetTint(0.2, 0.2, 0.2, 0.5) -- 灰色背景
+        widget.title:SetColour(1, 1, 1, 1) -- 白色文字
+    end
     
     -- 设置任务状态图标
     if data.completed then
@@ -110,6 +123,10 @@ local function ApplyDataToTaskItem(context, widget, data, index)
             local panel = TheFrontEnd:GetActiveScreen()
             if panel and panel.UpdateTaskDetail then
                 panel:UpdateTaskDetail(data)
+                -- 更新选中状态
+                if panel.UpdateTaskSelection then
+                    panel:UpdateTaskSelection()
+                end
             end
         end
     end
@@ -182,6 +199,14 @@ function MglResearchTaskPanel:CreateTaskDetailUI()
     self.submit_button:Disable()
 end
 
+-- 更新任务列表选中状态
+function MglResearchTaskPanel:UpdateTaskSelection()
+    if self.task_scroll_list then
+        -- 刷新任务列表以更新选中状态
+        self.task_scroll_list:RefreshView()
+    end
+end
+
 -- 更新任务详情显示
 function MglResearchTaskPanel:UpdateTaskDetail(task_data)
     if not task_data then
@@ -190,11 +215,16 @@ function MglResearchTaskPanel:UpdateTaskDetail(task_data)
         self.requirement_text:SetString("选择右侧任务查看详细要求")
         self.reward_text:SetString("选择右侧任务查看奖励")
         self.submit_button:Disable()
+        self.current_task = nil
+        -- 刷新列表以清除选中状态
+        self:UpdateTaskSelection()
         return
     end
     
     -- 保存当前选中的任务
     self.current_task = task_data
+    -- 更新任务列表选中状态
+    self:UpdateTaskSelection()
     
     -- 更新任务详情
     self.detail_title:SetString(task_data.title)

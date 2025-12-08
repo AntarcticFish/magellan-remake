@@ -212,12 +212,27 @@ local function ApplyDataToShopItem(context, widget, data, index)
     
     widget:Show()
     widget.data = data
+    widget.index = index
     
     -- 设置商品名称
     widget.name:SetString(data.name)
     
     -- 设置商品价格
     widget.price:SetString(data.price .. "点")
+    
+    -- 高亮显示当前选中的商品
+    local panel = TheFrontEnd:GetActiveScreen()
+    if panel and panel.current_item and data.name == panel.current_item.name then
+        -- 选中状态：蓝色背景，黄色文字
+        widget.bg:SetTint(0.2, 0.3, 0.5, 0.8) -- 深蓝色背景
+        widget.name:SetColour(1, 0.9, 0.4, 1) -- 黄色文字
+        widget.price:SetColour(1, 1, 1, 1) -- 白色价格
+    else
+        -- 未选中状态：默认灰色背景和文字
+        widget.bg:SetTint(0.2, 0.2, 0.2, 0.5) -- 灰色背景
+        widget.name:SetColour(1, 1, 1, 1) -- 白色文字
+        widget.price:SetColour(0, 1, 0, 1) -- 绿色价格
+    end
     
     -- 添加点击事件
     widget.OnMouseButton = function(self, button, down, x, y)
@@ -226,6 +241,10 @@ local function ApplyDataToShopItem(context, widget, data, index)
             local panel = TheFrontEnd:GetActiveScreen()
             if panel and panel.UpdateItemDetail then
                 panel:UpdateItemDetail(data)
+                -- 更新选中状态
+                if panel.UpdateShopItemSelection then
+                    panel:UpdateShopItemSelection()
+                end
             end
         end
     end
@@ -323,6 +342,14 @@ function MglResearchShopPanel:CreateItemDetailUI()
     self.buy_button:Disable()
 end
 
+-- 更新商品列表选中状态
+function MglResearchShopPanel:UpdateShopItemSelection()
+    if self.shop_item_list then
+        -- 刷新商品列表以更新选中状态
+        self.shop_item_list:RefreshView()
+    end
+end
+
 -- 更新商品详情显示
 function MglResearchShopPanel:UpdateItemDetail(item_data)
     if not item_data then
@@ -333,6 +360,8 @@ function MglResearchShopPanel:UpdateItemDetail(item_data)
         self.price_label:SetString("价格: -- 科研点数")
         self.buy_button:Disable()
         self.current_item = nil
+        -- 刷新列表以清除选中状态
+        self:UpdateShopItemSelection()
         return
     end
     
@@ -360,6 +389,9 @@ function MglResearchShopPanel:UpdateItemDetail(item_data)
     
     -- 检查玩家是否有足够的科研点数购买
     self:CheckCanAffordItem()
+    
+    -- 更新商品列表选中状态
+    self:UpdateShopItemSelection()
 end
 
 -- 检查玩家是否有足够的科研点数购买当前商品

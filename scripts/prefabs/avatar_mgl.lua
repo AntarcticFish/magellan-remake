@@ -140,7 +140,7 @@ local master_postinit = function(inst)
 
 	inst:AddComponent("mgl_system")
 	--任务系统开关
-	-- inst:AddComponent("mgl_task_system")
+	inst:AddComponent("mgl_task_system")
 	
 	-- 检查是否启用黑洞协议设置
 	-- local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")

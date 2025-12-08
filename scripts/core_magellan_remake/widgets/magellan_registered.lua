@@ -44,28 +44,28 @@ AddClassPostConstruct(
     end
 )
 -- 任务系统开关
--- local MglTerminalPanel = require "screens/mgl_terminal_panel"
--- local function AddMagellanEventScreen(self)
---     if self.owner and self.owner:HasTag("mgl") then
---         local ImageButton = require("widgets/imagebutton")
---         self.mglui = self:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex",
---             nil, nil, nil, nil, { 1, 1 }, { 0, 0 }))
---         self.mglui:SetScale(1, 1)
---         self.mglui:SetPosition(-100, 0, 0)
---         self.mglui:SetOnClick(function()
---             local screen = TheFrontEnd:GetActiveScreen()
---             if not screen or not screen.name then return true end
---             -- If the hud exists, open the UI
---             if screen.name:find("HUD") then
---                 TheFrontEnd:PushScreen(MglTerminalPanel(self.owner))
---                 return true
---             else
---                 -- If the screen is already open, close it
---                 if screen.name == "mgl_terminal_panel" then
---                     screen:Close()
---                 end
---             end
---         end)
---     end
--- end
--- AddClassPostConstruct("widgets/statusdisplays", AddMagellanEventScreen)
+local MglTerminalPanel = require "screens/mgl_terminal_panel"
+local function AddMagellanEventScreen(self)
+    if self.owner and self.owner:HasTag("mgl") then
+        local ImageButton = require("widgets/imagebutton")
+        self.mglui = self:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex",
+            nil, nil, nil, nil, { 1, 1 }, { 0, 0 }))
+        self.mglui:SetScale(1, 1)
+        self.mglui:SetPosition(-100, 0, 0)
+        self.mglui:SetOnClick(function()
+            local screen = TheFrontEnd:GetActiveScreen()
+            if not screen or not screen.name then return true end
+            -- If the hud exists, open the UI
+            if screen.name:find("HUD") then
+                TheFrontEnd:PushScreen(MglTerminalPanel(self.owner))
+                return true
+            else
+                -- If the screen is already open, close it
+                if screen.name == "mgl_terminal_panel" then
+                    screen:Close()
+                end
+            end
+        end)
+    end
+end
+AddClassPostConstruct("widgets/statusdisplays", AddMagellanEventScreen)

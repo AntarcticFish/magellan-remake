@@ -95,6 +95,25 @@ local MglTerminalPanel = Class(Screen, function(self, owner)
         TheFrontEnd:PushScreen(MglResearchShopPanel(self.owner))
     end)
 
+    --莱茵唱片图标按钮（类似手机APP样式上图下字）
+    self.rhine_record_icon = self.root:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
+    self.rhine_record_icon:SetScale(1.0, 1.0)  -- 使用SetScale而不是SetSize
+    self.rhine_record_icon:SetPosition(80, 107.5)
+    --下方添加字体
+    self.rhine_record_text = self.root:AddChild(Text(BODYTEXTFONT, 20))
+    self.rhine_record_text:SetString("莱茵唱片")
+    self.rhine_record_text:SetColour(1, 1, 1, 1)
+    self.rhine_record_text:SetPosition(80, 47.5)
+    self.rhine_record_icon:SetOnClick(function()
+        -- 延迟导入以避免循环依赖
+        local MglRhineRecordPanel = require "screens/mgl_rhine_record_panel"
+        local screen = TheFrontEnd:GetActiveScreen()
+        if screen and screen.name == "mgl_terminal_panel" then
+            screen:Close()
+        end
+        TheFrontEnd:PushScreen(MglRhineRecordPanel(self.owner))
+    end)
+
 end)
 
 
