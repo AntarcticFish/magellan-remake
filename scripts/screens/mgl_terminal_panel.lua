@@ -114,6 +114,25 @@ local MglTerminalPanel = Class(Screen, function(self, owner)
         TheFrontEnd:PushScreen(MglRhineRecordPanel(self.owner))
     end)
 
+    --更新记录图标按钮（类似手机APP样式上图下字）
+    self.update_log_icon = self.root:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
+    self.update_log_icon:SetScale(1.0, 1.0)  -- 使用SetScale而不是SetSize
+    self.update_log_icon:SetPosition(-280, -50 + 47.5) -- 签到系统下方，间隔50像素
+    --下方添加字体
+    self.update_log_text = self.root:AddChild(Text(BODYTEXTFONT, 20))
+    self.update_log_text:SetString("更新记录")
+    self.update_log_text:SetColour(1, 1, 1, 1)
+    self.update_log_text:SetPosition(-280, -110 + 47.5) -- 图标下方
+    self.update_log_icon:SetOnClick(function()
+        -- 延迟导入以避免循环依赖
+        local MglUpdateLogPanel = require "screens/mgl_update_log_panel"
+        local screen = TheFrontEnd:GetActiveScreen()
+        if screen and screen.name == "mgl_terminal_panel" then
+            screen:Close()
+        end
+        TheFrontEnd:PushScreen(MglUpdateLogPanel(self.owner))
+    end)
+
 end)
 
 

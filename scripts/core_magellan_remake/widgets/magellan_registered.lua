@@ -51,7 +51,7 @@ local function AddMagellanEventScreen(self)
         self.mglui = self:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex",
             nil, nil, nil, nil, { 1, 1 }, { 0, 0 }))
         self.mglui:SetScale(1, 1)
-        self.mglui:SetPosition(-100, 0, 0)
+        self.mglui:SetPosition(-200, 100, 0)
         self.mglui:SetOnClick(function()
             local screen = TheFrontEnd:GetActiveScreen()
             if not screen or not screen.name then return true end
