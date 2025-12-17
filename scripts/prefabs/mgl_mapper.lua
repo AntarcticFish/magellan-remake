@@ -423,6 +423,7 @@ local function build_fn()
     inst.AnimState:SetBuild("mgl_mapper")
     inst.AnimState:PlayAnimation("stand_idle")
 
+    inst:AddTag("mgl_mapper_structure")
     inst:AddTag("structure")
     inst.entity:SetPristine()
 
@@ -448,6 +449,11 @@ local function build_fn()
         turnoff(inst)
     end)
     -- light_on(inst)
+
+    inst:AddComponent("machine")
+    inst.components.machine.turnonfn = light_on
+    inst.components.machine.turnofffn = turnoff
+    inst.components.machine.cooldowntime = 0
 
     inst:AddComponent("portablestructure")
     inst.components.portablestructure:SetOnDismantleFn(OnDismantle)

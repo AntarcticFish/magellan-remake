@@ -9,9 +9,9 @@ STRINGS.CHARACTERS.MGL = require "speech_mgl_en"
 
 STRINGS.MGL_USEANOFF = "This item has already been used!"
 STRINGS.MGL_MUST_LEVEL = "You need to use the Elite 1 Promotion Book first!"
-STRINGS.MGL_MUST_LEVEL2 = "You need to use the Instructional Longteng UAV first!"
+STRINGS.MGL_MUST_LEVEL2 = "You need to use the Instructional Soaring Dragon Drone first!"
 --STRINGS.MGL_MUST_LEVEL_NEED = "需要达到精英化二阶"英文
-STRINGS.MGL_MUST_LEVEL_NEED = "You need to be at Elite level 2"
+STRINGS.MGL_MUST_LEVEL_NEED = "You need to be at Elite 2"
 STRINGS.MGL_ITEM_FN = "Use Item"
 STRINGS.MGL_ITEM_FN_CASTSPELL = "Cast Spell"
 
@@ -32,10 +32,10 @@ STRINGS.RECIPE_DESC.MGL_D99 = "Unlocks YHLY Module"
 
 STRINGS.NAMES.MGL_MOBILECHARGER = "Portable Power Charger"
 STRINGS.CHARACTERS.GENERIC.DESCRIBE.MGL_MOBILECHARGER = "A power bank?"
-STRINGS.CHARACTERS.MGL.DESCRIBE.MGL_MOBILECHARGER = "Mobile Power Upgrade Device"
+STRINGS.CHARACTERS.MGL.DESCRIBE.MGL_MOBILECHARGER = "Portable Power Charger"
 
 STRINGS.NAMES.MGL_MAPPER_ITEM = "Universal Multifunctional Surveyor"
-STRINGS.CHARACTERS.GENERIC.DESCRIBE.MGL_MAPPER_ITEM = "Where did this come from?"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.MGL_MAPPER_ITEM = "Universal Multifunctional Surveyor"
 STRINGS.CHARACTERS.MGL.DESCRIBE.MGL_MAPPER_ITEM = "Universal Multifunctional Surveyor"
 
 STRINGS.NAMES.MGL_MAPPER = "Universal Multifunctional Surveyor"

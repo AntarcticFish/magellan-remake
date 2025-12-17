@@ -90,7 +90,7 @@ local LANGS = {
             -- }},
             {'Skill Parameters'},
             --英文
-            {modid..'_skill2_atk_speed','Skill 2 Attack Speed Multiplier()','Skill 2 attack speed multiplier(Elite 1/Elite 2)',0.5,{
+            {modid..'_skill2_atk_speed','Skill 2 Attack Speed Multiplier(Multiplicative)','Skill 2 attack speed multiplier(Elite 1/Elite 2)',0.5,{
                 {'0.4x/0.5x(Default)',0.5},
                 {'0.5x/0.6x',0.6},
                 {'0.6x/0.7x',0.7},
@@ -118,7 +118,7 @@ local LANGS = {
                 {'90%',0.9},
                 {'100%',1}
             }},
-            {modid..'_uav_hit_volume','Drone attack hit Volume','Drone attack hit volume',0.5,{
+            {modid..'_uav_hit_volume','Drone Attack Hit Volume','Drone attack hit volume',0.5,{
                 {'0%',0},
                 {'10%',0.1},
                 {'20%',0.2},
@@ -144,7 +144,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.14'
+version = '1.0.15'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10

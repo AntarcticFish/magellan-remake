@@ -97,7 +97,23 @@ local data = {
 
 ---@type data_componentaction_change[]
 local change = {
-    
+    {
+        type = "SCENE",
+        component = 'machine',
+        testfn = function (old_fn, ...)
+            local inst = select(1, ...)
+            local doer = select(2, ...)
+            if inst:HasTag('mgl_mapper_structure') then
+                --按住alt键使用
+                if doer.components.playercontroller ~= nil and
+                    doer.components.playercontroller:IsControlPressed(CONTROL_FORCE_INSPECT) then
+                    return old_fn(...)
+                end
+                return false
+            end
+            return old_fn(...)
+        end
+    }
 }
 
 return data,change
