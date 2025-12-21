@@ -51,7 +51,7 @@ local function OnUpdateProjectileTail(inst, bank, build, speed, lightoverride, a
         local offsradius = math.random() * .2 + .2
         local hoffset = math.cos(offsangle) * offsradius
         local voffset = math.sin(offsangle) * offsradius
-        tail.Transform:SetPosition(x + math.sin(rot) * hoffset, y + voffset, z + math.cos(rot) * hoffset)
+        tail.Transform:SetPosition(x + math.sin(rot) * hoffset, y + voffset - 0.8, z + math.cos(rot) * hoffset)
         tail.Physics:SetMotorVel(speed * (.2 + math.random() * .3), 0, 0)
         tails[tail] = true
         inst:ListenForEvent("onremove", function(tail) tails[tail] = nil end, tail)
@@ -96,11 +96,13 @@ local function fn()
     MakeInventoryPhysics(inst)
     RemovePhysicsColliders(inst)
 
-    inst.Transform:SetEightFaced()
+    -- inst.Transform:SetEightFaced()
+    inst.Transform:SetScale(1.2, 1.2, 1.2)
 
     inst.AnimState:SetBank("mgl_fx")
     inst.AnimState:SetBuild("mgl_fx")
     inst.AnimState:PlayAnimation("mgl_uav_66_proj",true)
+    inst.AnimState:SetOrientation(ANIM_ORIENTATION.OnGround)
     -- inst.AnimState:PlayAnimation("idle")
     inst.AnimState:SetFinalOffset(3)
 
@@ -126,7 +128,7 @@ local function fn()
     inst.components.projectile:SetOnHitFn(OnHit)
     inst.components.projectile:SetOnMissFn(inst.Remove)
     inst.components.projectile:SetOnThrownFn(OnThrown)
-
+    inst.components.projectile:SetLaunchOffset(Vector3(0, 1.6, 0))
     return inst
 end
 

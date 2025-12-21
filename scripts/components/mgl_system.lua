@@ -333,6 +333,9 @@ function Mgl_System:RemoveFollower()
                 --将无人机container中物品丢出
                 v.components.container:DropEverything(self.inst:GetPosition())
             end
+            if self.uav_type == 2 then
+                v.AnimState:SetDeltaTimeMultiplier(1)
+            end
             v.attack = false
             -- 延迟0.5秒后继续执行撤退逻辑
             v:DoTaskInTime(0.5, function()
@@ -617,6 +620,7 @@ function Mgl_System:UseSkill()
             for k, v in pairs(self.follower) do
                 v.aoe = true
                 v.components.combat.min_attack_period = min_attack_period
+                v.AnimState:SetDeltaTimeMultiplier(1 / min_attack_period)
                 if v and v.entity then
                     local skillfx = SpawnPrefab("mgl_fx")
                     skillfx.entity:SetParent(v.entity)
