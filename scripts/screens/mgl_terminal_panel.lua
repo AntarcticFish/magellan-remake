@@ -132,7 +132,25 @@ local MglTerminalPanel = Class(Screen, function(self, owner)
         end
         TheFrontEnd:PushScreen(MglUpdateLogPanel(self.owner))
     end)
-
+    
+    --AI助手图标按钮（类似手机APP样式上图下字）
+    self.ai_assistant_icon = self.root:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
+    self.ai_assistant_icon:SetScale(1.0, 1.0)  -- 使用SetScale而不是SetSize
+    self.ai_assistant_icon:SetPosition(-160, -50 + 47.5) -- 更新记录右侧，间隔120像素
+    --下方添加字体
+    self.ai_assistant_text = self.root:AddChild(Text(BODYTEXTFONT, 20))
+    self.ai_assistant_text:SetString("AI助手")
+    self.ai_assistant_text:SetColour(1, 1, 1, 1)
+    self.ai_assistant_text:SetPosition(-160, -110 + 47.5) -- 图标下方
+    self.ai_assistant_icon:SetOnClick(function()
+        -- 延迟导入以避免循环依赖
+        local MglAiAssistantPanel = require "screens/mgl_ai_assistant_panel"
+        local screen = TheFrontEnd:GetActiveScreen()
+        if screen and screen.name == "mgl_terminal_panel" then
+            screen:Close()
+        end
+        TheFrontEnd:PushScreen(MglAiAssistantPanel(self.owner))
+    end)
 end)
 
 
