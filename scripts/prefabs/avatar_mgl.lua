@@ -119,6 +119,11 @@ local common_postinit = function(inst)
 	inst.call_cooldown:set(0)
 	inst.skill_cooldown_max = net_smallbyte(inst.GUID, "skill_cooldown_max", "skill_cooldown_max")
 	inst.skill_cooldown_max:set(1)
+	
+	-- 通讯系统网络变量
+	inst.communication_data = net_string(inst.GUID, "communication_data", "communication_data_changed")
+	inst.communication_data:set("")
+	
 	inst.MiniMapEntity:SetIcon(avatar_name..'.tex')
 end
 
@@ -141,6 +146,8 @@ local master_postinit = function(inst)
 	inst:AddComponent("mgl_system")
 	--任务系统开关
 	inst:AddComponent("mgl_task_system")
+	-- 通讯系统
+	inst:AddComponent("mgl_communication_data")
 	
 	-- 检查是否启用黑洞协议设置
 	-- local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")

@@ -112,6 +112,9 @@ modimport "scripts/core_magellan_remake/widgets/magellan_registered.lua"
 --任务系统开关
 AddReplicableComponent("mgl_task_system")
 
+-- 注册通讯数据组件为可复制组件
+AddReplicableComponent("mgl_communication_data")
+
 -- 只在黑洞协议开启时注册mgl_collapse_value组件
 -- local enable_blackhole = SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_blackhole_protocol")
 -- if enable_blackhole then
@@ -196,4 +199,49 @@ AddModRPCHandler(modid, "RecallUav", function(player)
     if player and player:IsValid() and player.components and player.components.mgl_system then 
         player.components.mgl_system:RemoveFollower() 
     end 
+end)
+
+-- 注册通讯系统相关的RPC函数
+-- 移除之前的SyncCommunicationData RPC，恢复使用实体事件同步
+
+AddModRPCHandler(modid, "SendFriendRequest", function(player, target_id, target_name)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:SendFriendRequest(target_id, target_name)
+    end
+end)
+
+AddModRPCHandler(modid, "ReceiveFriendRequest", function(player, sender_id, sender_name)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:ReceiveFriendRequest(sender_id, sender_name)
+    end
+end)
+
+AddModRPCHandler(modid, "AcceptFriendRequest", function(player, friend_id, friend_name)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:AddFriend(friend_id, friend_name)
+    end
+end)
+
+AddModRPCHandler(modid, "RejectFriendRequest", function(player, request_id)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:RejectFriendRequest(request_id)
+    end
+end)
+
+AddModRPCHandler(modid, "CancelFriendRequest", function(player, request_id)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:CancelFriendRequest(request_id)
+    end
+end)
+
+AddModRPCHandler(modid, "SendMessage", function(player, friend_id, content, sender_id)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:SendMessage(friend_id, content, sender_id)
+    end
+end)
+
+AddModRPCHandler(modid, "RemoveFriend", function(player, friend_id)
+    if player and player:IsValid() and player.components and player.components.mgl_communication_data then
+        player.components.mgl_communication_data:RemoveFriend(friend_id)
+    end
 end)

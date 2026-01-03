@@ -133,6 +133,25 @@ local MglTerminalPanel = Class(Screen, function(self, owner)
         TheFrontEnd:PushScreen(MglUpdateLogPanel(self.owner))
     end)
 
+    --通讯APP图标按钮（类似手机APP样式上图下字）
+    self.communication_icon = self.root:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
+    self.communication_icon:SetScale(1.0, 1.0)  -- 使用SetScale而不是SetSize
+    self.communication_icon:SetPosition(-160, -50 + 47.5) -- 更新记录右侧，间隔50像素
+    --下方添加字体
+    self.communication_text = self.root:AddChild(Text(BODYTEXTFONT, 20))
+    self.communication_text:SetString("通讯")
+    self.communication_text:SetColour(1, 1, 1, 1)
+    self.communication_text:SetPosition(-160, -110 + 47.5) -- 图标下方
+    self.communication_icon:SetOnClick(function()
+        -- 延迟导入以避免循环依赖
+        local MglCommunicationPanel = require "screens/mgl_communication_panel"
+        local screen = TheFrontEnd:GetActiveScreen()
+        if screen and screen.name == "mgl_terminal_panel" then
+            screen:Close()
+        end
+        TheFrontEnd:PushScreen(MglCommunicationPanel(self.owner))
+    end)
+
 end)
 
 
