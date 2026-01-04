@@ -59,6 +59,18 @@ function MglCommunicationDataReplica:GetChatRecords(friend_id)
     return self.chat_records[friend_id] or {}
 end
 
+-- 检查是否为好友
+function MglCommunicationDataReplica:IsFriend(friend_id)
+    for i, friend in ipairs(self.friends) do
+        if friend.id == friend_id then
+            return true
+        end
+    end
+    return false
+end
+
+
+
 -- 发送好友申请（客户端调用）
 function MglCommunicationDataReplica:RPCSendFriendRequest(target_id, target_name)
     SendModRPCToServer(MOD_RPC["magellan_remake"]["SendFriendRequest"], target_id, target_name)

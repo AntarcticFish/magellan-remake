@@ -1,3 +1,12 @@
+local function on_mgl_communication_data(self, data)
+    if self.inst.communication_data then
+        -- 序列化数据
+        local data_str = json.encode(data)
+        -- 更新网络变量
+        self.inst.communication_data:set(data_str)
+    end
+end
+
 local mgl_communication_data = Class(function(self, inst)
     self.inst = inst
     
@@ -13,7 +22,9 @@ local mgl_communication_data = Class(function(self, inst)
         -- 服务器端：注册replica数据同步
         inst:AddTag("mgl_communication_data")
     end
-end)
+end, nil, {
+    data = on_mgl_communication_data
+})
 
 -- 获取所有数据
 function mgl_communication_data:GetAllData()
@@ -35,15 +46,6 @@ function mgl_communication_data:GetChatRecords(friend_id)
     return self.data.chat_records[friend_id] or {}
 end
 
--- 更新网络数据
-function mgl_communication_data:UpdateNetworkData()
-    if TheWorld.ismastersim and self.inst.communication_data then
-        -- 序列化数据
-        local data_str = json.encode(self.data)
-        -- 更新网络变量
-        self.inst.communication_data:set(data_str)
-    end
-end
 
 -- 添加好友
 function mgl_communication_data:AddFriend(friend_id, friend_name)
@@ -95,14 +97,10 @@ function mgl_communication_data:AddFriend(friend_id, friend_name)
                     end
                 end
                 
-                -- 更新对方的网络数据
-                friend_component:UpdateNetworkData()
                 break
             end
         end
         
-        -- 更新网络数据
-        self:UpdateNetworkData()
         
         return true
     end
@@ -140,9 +138,7 @@ function mgl_communication_data:SendFriendRequest(target_id, target_name)
             -- 自己添加自己为好友，直接生成接收申请
             self:ReceiveFriendRequest(sender_id, sender_name)
         end
-        
-        -- 更新网络数据 (放在最后，确保所有操作完成后再同步)
-        self:UpdateNetworkData()
+
         
         return true
     end
@@ -162,8 +158,6 @@ function mgl_communication_data:ReceiveFriendRequest(sender_id, sender_name)
         -- 添加到好友申请列表
         table.insert(self.data.friend_requests, {id = sender_id, name = sender_name, type = "received"})
         
-        -- 更新网络数据
-        self:UpdateNetworkData()
         
         return true
     end
@@ -176,8 +170,6 @@ function mgl_communication_data:RejectFriendRequest(request_id)
         for i, request in ipairs(self.data.friend_requests) do
             if request.id == request_id and request.type == "received" then
                 table.remove(self.data.friend_requests, i)
-                -- 更新网络数据
-                self:UpdateNetworkData()
                 return true
             end
         end
@@ -191,8 +183,6 @@ function mgl_communication_data:CancelFriendRequest(request_id)
         for i, request in ipairs(self.data.friend_requests) do
             if request.id == request_id and request.type == "sent" then
                 table.remove(self.data.friend_requests, i)
-                -- 更新网络数据
-                self:UpdateNetworkData()
                 return true
             end
         end
@@ -208,8 +198,6 @@ function mgl_communication_data:RemoveFriend(friend_id)
                 table.remove(self.data.friends, i)
                 -- 删除聊天记录
                 self.data.chat_records[friend_id] = nil
-                -- 更新网络数据
-                self:UpdateNetworkData()
                 
                 -- 找到对方玩家并从其好友列表中移除
                 local current_player_id = self.inst.userid
@@ -221,8 +209,6 @@ function mgl_communication_data:RemoveFriend(friend_id)
                                 table.remove(friend_component.data.friends, j)
                                 -- 删除对方的聊天记录
                                 friend_component.data.chat_records[current_player_id] = nil
-                                -- 更新对方的网络数据
-                                friend_component:UpdateNetworkData()
                                 break
                             end
                         end
@@ -271,8 +257,6 @@ function mgl_communication_data:SendMessage(friend_id, content, sender_id)
             table.remove(self.data.chat_records[friend_id], 1)
         end
         
-        -- 更新发送方的网络数据
-        self:UpdateNetworkData()
         
         -- 找到接收方玩家并更新其聊天记录
         local sender_name = self.inst.name or "未知玩家"
@@ -293,8 +277,7 @@ function mgl_communication_data:SendMessage(friend_id, content, sender_id)
                     table.remove(receiver_component.data.chat_records[sender_id], 1)
                 end
                 
-                -- 更新接收方的网络数据
-                receiver_component:UpdateNetworkData()
+
                 break
             end
         end
@@ -302,6 +285,28 @@ function mgl_communication_data:SendMessage(friend_id, content, sender_id)
         return true
     end
     return false
+end
+
+--检查是否已经是好友
+function mgl_communication_data:IsFriend(friend_id)
+    for i, friend in ipairs(self.data.friends) do
+        if friend.id == friend_id then
+            return true
+        end
+    end
+    return false
+end
+
+function mgl_communication_data:OnLoad(data)
+    self.data = data.data or {
+        friends = {}, -- 好友列表
+        friend_requests = {}, -- 好友申请
+        chat_records = {} -- 聊天记录
+    }
+end
+
+function mgl_communication_data:OnSave()
+    return { data = self.data }
 end
 
 -- RPC方法：发送好友申请

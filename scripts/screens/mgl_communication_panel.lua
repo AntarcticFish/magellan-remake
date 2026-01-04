@@ -69,10 +69,10 @@ function MglCommunicationPanel:CreateFriendList()
     -- 好友列表容器
     self.friend_list_container = self.right_bar:AddChild(Widget("friend_list_container"))
     
-    -- 添加好友按钮
+    -- 添加好友按钮，并列于好友申请按钮
     self.add_friend_button = self.friend_list_container:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
     self.add_friend_button:SetScale(0.8, 0.4)
-    self.add_friend_button:SetPosition(0, 200)
+    self.add_friend_button:SetPosition(-50, 200)
     self.add_friend_button:SetTextSize(18)
     self.add_friend_button:SetText("添加好友")
     self.add_friend_button.text:SetColour(1, 1, 1, 1)
@@ -83,7 +83,7 @@ function MglCommunicationPanel:CreateFriendList()
     -- 好友申请按钮
     self.friend_request_button = self.friend_list_container:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
     self.friend_request_button:SetScale(0.8, 0.4)
-    self.friend_request_button:SetPosition(0, 160)
+    self.friend_request_button:SetPosition(50, 200)
     self.friend_request_button:SetTextSize(18)
     self.friend_request_button:SetText("好友申请")
     self.friend_request_button.text:SetColour(1, 1, 1, 1)
@@ -203,8 +203,8 @@ function MglCommunicationPanel:CreateChatArea()
     
     -- 聊天记录滚动列表
     local widget_width = 520
-    local widget_height = 70
-    local num_visible_rows = 7
+    local widget_height = 60
+    local num_visible_rows = 6
     
     self.chat_scroll_list = self.chat_container:AddChild(TEMPLATES.ScrollingGrid(
         {},
@@ -260,7 +260,7 @@ function MglCommunicationPanel:CreateChatArea()
                     bubble:SetPosition(-150, 0)
                 end
             end,
-            scrollbar_offset = -10,
+            scrollbar_offset = 0,
             scrollbar_height_offset = -60,
             peek_percent = 0.1,
             allow_bottom_empty_row = true,
@@ -273,13 +273,13 @@ function MglCommunicationPanel:CreateChatArea()
     
     -- 消息输入框背景
     self.input_bg = self.chat_container:AddChild(Image("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
-    self.input_bg:SetSize(520, 60)
+    self.input_bg:SetSize(490, 60)
     self.input_bg:SetPosition(0, -200)
     self.input_bg:SetTint(0.2, 0.2, 0.2, 0.8)
     
     -- 消息输入框
     self.message_input = self.chat_container:AddChild(TextEdit(BODYTEXTFONT, 20, ""))
-    self.message_input:SetRegionSize(480, 50)
+    self.message_input:SetRegionSize(450, 50)
     self.message_input:SetPosition(0, -200)
     self.message_input:SetColour(1, 1, 1, 1)
     self.message_input:SetHAlign(ANCHOR_LEFT)
@@ -289,7 +289,7 @@ function MglCommunicationPanel:CreateChatArea()
     -- 发送按钮
     self.send_button = self.chat_container:AddChild(ImageButton("images/inventoryimages/mgl_skill1.xml", "mgl_skill1.tex"))
     self.send_button:SetScale(0.5, 0.5)
-    self.send_button:SetPosition(280, -200)
+    self.send_button:SetPosition(250, -200)
     self.send_button:SetTextSize(16)
     self.send_button:SetText("发送")
     self.send_button.text:SetColour(1, 1, 1, 1)
@@ -304,7 +304,7 @@ function MglCommunicationPanel:CreateMessageBubble(content, is_self)
     
     -- 气泡背景
     local bg = bubble:AddChild(Image("images/ui.xml", "button.tex"))
-    bg:SetSize(300, 50)
+    bg:SetSize(250, 70)
     bg:SetTint(is_self and 0.2 or 0.4, is_self and 0.5 or 0.2, is_self and 0.2 or 0.2, 0.9)
     
     -- 圆角处理
@@ -316,7 +316,7 @@ function MglCommunicationPanel:CreateMessageBubble(content, is_self)
     text:SetPosition(is_self and 10 or -10, 0)  -- 调整文本位置，避免文字贴边
     text:SetHAlign(is_self and ANCHOR_LEFT or ANCHOR_RIGHT)  -- 修正对齐方向
     text:SetVAlign(ANCHOR_MIDDLE)  -- 垂直居中对齐
-    text:SetRegionSize(260, 50)  -- 减小文本区域，留出边距
+    text:SetRegionSize(220, 60)  -- 减小文本区域，留出边距
     text:EnableWordWrap(true)
     
     return bubble
@@ -367,6 +367,11 @@ function MglCommunicationPanel:RefreshChatRecords()
     self.chat_scroll_list:SetItemsData(chat_records)
     self.chat_scroll_list:RefreshView()
     
+    -- 滚动到底部
+    if self.chat_scroll_list then
+        -- 直接滚动到最大位置
+        self.chat_scroll_list:Scroll(self.chat_scroll_list.end_pos)
+    end
 end
 
 -- 发送消息
@@ -400,7 +405,10 @@ function MglCommunicationPanel:ShowAddFriendUI()
     -- 遍历所有玩家
     for _, player in pairs(AllPlayers) do
         if player and player.userid and player.name then
-            table.insert(players, {id = player.userid, name = player.name})
+            -- 检查是否已添加好友
+            if not self.owner.replica.mgl_communication_data:IsFriend(player.userid) then
+                table.insert(players, {id = player.userid, name = player.name})
+            end  
         end
     end
     
