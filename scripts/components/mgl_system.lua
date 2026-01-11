@@ -202,26 +202,10 @@ local mode = {
 }
 
 local fxanim = {
-    [1] = {
-        pre = "fx1_pre",
-        loop = "fx1_loop",
-        pst = "fx1_pst"
-    },
-    [2] = {
-        pre = "fx2_pre",
-        loop = "fx2_loop",
-        pst = "fx2_pst"
-    },
-    [3] = {
-        pre = "fx2_pre",
-        loop = "fx2_loop",
-        pst = "fx2_pst"
-    },
-    [4] = {
-        pre = "fx2_pre",
-        loop = "fx2_loop",
-        pst = "fx2_pst"
-    }
+    [1] = "fx1",
+    [2] = "fx2",
+    [3] = "fx2",
+    [4] = "fx2"
 }
 
 local anim = {
@@ -265,19 +249,10 @@ function Mgl_System:RemoveFollower()
         self.task:Cancel()
         self.task = nil
     end
-    if self.fx21 ~= nil then
-        self.fx21:Remove()
-    end
-    if self.fx ~= nil then
-        if self.fx:IsValid() then
-            self.fx.AnimState:PlayAnimation(fxanim[self.uav_type].pst)
-            if self.fx.AnimState:IsCurrentAnimation(fxanim[self.uav_type].pst) then
-                self.fx:Remove()
-            end
-            if self.fx ~= nil then
-                self.fx:Remove()
-                self.fx = nil
-            end
+    if self.fx_main ~= nil then
+        if self.fx_main:IsValid() then
+            self.fx_main:Remove()
+            self.fx_main = nil
         end
     end
       
@@ -512,6 +487,69 @@ local mission = {
     [4] = { cd = 30, tasktime = 30 },
 }
 
+function Mgl_System:BackFX(uav_type)
+    if self.fx_main ~= nil then
+        self.fx_main:Remove()
+        self.fx_main = nil
+    end
+    self.fx_main = SpawnPrefab("mgl_fx_main")
+    self.fx_main.entity:SetParent(self.inst.entity)
+    
+    if self.fx_main.fx_front == nil then
+        --fx
+        self.fx_main.fx_front = SpawnPrefab("mgl_fx_front")
+        self.fx_main.fx_front.AnimState:PlayAnimation(fxanim[uav_type], true)
+        self.fx_main.fx_front.entity:SetParent(self.inst.entity)
+        self.fx_main.fx_front.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 30, 0.1)
+        self.fx_main.fx_front.Transform:SetRotation(self.inst.Transform:GetRotation())
+    end
+
+    if self.fx_main.fx_front21 == nil then
+        --fx21
+        self.fx_main.fx_front21 = SpawnPrefab("mgl_fx_front")
+        self.fx_main.fx_front21.AnimState:PlayAnimation("fx21", true)
+        self.fx_main.fx_front21.entity:SetParent(self.inst.entity)
+        self.fx_main.fx_front21.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 50, 0.1)
+        self.fx_main.fx_front21.Transform:SetRotation(self.inst.Transform:GetRotation())
+    end
+
+    if self.fx_main.fx_back == nil then
+        --fx
+        self.fx_main.fx_back = SpawnPrefab("mgl_fx_back")
+        self.fx_main.fx_back.AnimState:PlayAnimation(fxanim[uav_type], true)
+        self.fx_main.fx_back.entity:SetParent(self.inst.entity)
+        self.fx_main.fx_back.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 30, -0.1)
+        self.fx_main.fx_back.Transform:SetRotation(self.inst.Transform:GetRotation())
+    end
+
+    if self.fx_main.fx_back21 == nil then
+        --fx21
+        self.fx_main.fx_back21 = SpawnPrefab("mgl_fx_back")
+        self.fx_main.fx_back21.AnimState:PlayAnimation("fx21", true)
+        self.fx_main.fx_back21.entity:SetParent(self.inst.entity)
+        self.fx_main.fx_back21.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 50, -0.1)
+        self.fx_main.fx_back21.Transform:SetRotation(self.inst.Transform:GetRotation())
+    end
+
+
+    if self.fx_main.fx_side == nil then
+        --fx
+        self.fx_main.fx_side = SpawnPrefab("mgl_fx_side")
+        self.fx_main.fx_side.AnimState:PlayAnimation(fxanim[uav_type], true)
+        self.fx_main.fx_side.entity:SetParent(self.inst.entity)
+        self.fx_main.fx_side.Follower:FollowSymbol(self.inst.GUID, "swap_body", -32.5, 30, -0.1)
+        self.fx_main.fx_side.Transform:SetRotation(self.inst.Transform:GetRotation())
+    end
+
+    if self.fx_main.fx_side21 == nil then
+        --fx21
+        self.fx_main.fx_side21 = SpawnPrefab("mgl_fx_side")
+        self.fx_main.fx_side21.AnimState:PlayAnimation("fx21", true)
+        self.fx_main.fx_side21.entity:SetParent(self.inst.entity)
+        self.fx_main.fx_side21.Follower:FollowSymbol(self.inst.GUID, "swap_body", -32.5, 50, -0.1)
+        self.fx_main.fx_side21.Transform:SetRotation(self.inst.Transform:GetRotation())
+    end
+end
 
 function Mgl_System:UseSkill()
     if self.mgl_uav_item  == nil then
@@ -665,23 +703,8 @@ function Mgl_System:UseSkill()
             end
         end
         
-
-        local fx21 = SpawnPrefab("mgl_fx")
-        fx21.AnimState:SetFinalOffset(-1)
-        fx21.entity:AddFollower()
-        -- local x1, y1, z1 = inst.Transform:GetWorldPosition()
-        fx21.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 0, 0)
-        fx21.AnimState:PlayAnimation("fx21_loop",true)
-        self.fx21 = fx21
         
-        local fx = SpawnPrefab("mgl_fx")
-        fx.AnimState:SetFinalOffset(-1)
-        fx.entity:AddFollower()
-        -- local x1, y1, z1 = inst.Transform:GetWorldPosition()
-        fx.Follower:FollowSymbol(self.inst.GUID, "swap_body", 0, 0, 0)
-        fx.AnimState:PlayAnimation(fxanim[self.uav_type].pre)
-        fx.AnimState:PushAnimation(fxanim[self.uav_type].loop, true)
-        self.fx = fx
+        self:BackFX(self.uav_type)
         
         self.mgl_uav_item.components.rechargeable:Discharge(cd + task.tasktime)
         self.skill_cooldown_max = cd + task.tasktime

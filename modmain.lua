@@ -27,6 +27,7 @@ PrefabFiles = {
 	"mgl_uav_item",
 	"mgl_uav",
 	"mgl_fx",
+	"mgl_skill_fx",
 	"mgl_uav_lrbd_charge",
 	"mgl_uav_armed_charge",
 	"mgl_d99",
