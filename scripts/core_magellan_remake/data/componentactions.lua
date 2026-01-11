@@ -58,7 +58,7 @@ local data = {
         str = STRINGS.MGL_ITEM_FN,
         fn = function (act)
             local item = act.invobject
-            if item.components.mgl_itemfn ~= nil then
+            if item and item.components.mgl_itemfn ~= nil then
                 item.components.mgl_itemfn:RunningFunction(act.doer)
             end
             return true
@@ -78,7 +78,7 @@ local data = {
         str = STRINGS.MGL_ITEM_FN_CASTSPELL,
         fn = function (act)
             local item = act.invobject
-            if item.components.mgl_itemfn_castspell ~= nil then
+            if item and item.components.mgl_itemfn_castspell ~= nil then
                 item.components.mgl_itemfn_castspell:RunningFunction(act.doer)
             end
             return true
