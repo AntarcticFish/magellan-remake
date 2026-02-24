@@ -574,6 +574,24 @@ function Mgl_System:UseSkill()
         if type(task.cd) ~= "number" then
             cd = task.cd[mgl_level]
         end
+        -- 应用配置的冷却时间调整
+        if self.uav_type == 1 then
+            local config_cd = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill1_cooldown") or 30
+            local cd_diff = config_cd - 30
+            cd = cd + cd_diff
+        elseif self.uav_type == 2 then
+            local config_cd = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill2_cooldown") or 44
+            local cd_diff = config_cd - 44
+            cd = cd + cd_diff
+        elseif self.uav_type == 3 then
+            local config_cd = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill3_cooldown") or 38
+            local cd_diff = config_cd - 38
+            cd = cd + cd_diff
+        elseif self.uav_type == 4 then
+            local config_cd = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill4_cooldown") or 30
+            local cd_diff = config_cd - 30
+            cd = cd + cd_diff
+        end
         if self.uav_type == 4 and (self.module == 1 or self.module >= 3) then
             cd = cd - 15
         end

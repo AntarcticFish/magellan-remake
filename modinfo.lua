@@ -7,8 +7,8 @@ local LANGS = {
         name = '明日方舟 麦哲伦',
         description = '麦哲伦同人模组\n游戏中技能UI右键按住可拖拽\n技能按键可进入设置自行调整\n\n模组后续会有新的更新内容，有好的想法可进群交流\nBug反馈及交流Q群:763944960\n帮忙在创意工坊点点赞吧，谢谢喵！',
         config = {
-            {'语言'},
-            {modid..'_lang','语言','语言','cn',{
+            {'语言(Language)'},
+            {modid..'_lang','语言(Language)','语言(Language)','cn',{
                 {'简体中文','cn'},
                 {'English','en'}
             }},
@@ -34,6 +34,34 @@ local LANGS = {
                 {'2x',2},
                 {'2.25x',2.25},
                 {'2.5x(默认)',2.5}
+            }},
+            {modid..'_skill1_cooldown','1技能冷却时间','1技能冷却时间',30,{
+                {'20秒',20},
+                {'25秒',25},
+                {'30秒(默认)',30},
+                {'35秒',35},
+                {'40秒',40}
+            }},
+            {modid..'_skill2_cooldown','2技能冷却时间','2技能冷却时间(根据精英化等级)',44,{
+                {'34/28秒',34},
+                {'39/33秒',39},
+                {'44/38秒(默认)',44},
+                {'49/43秒',49},
+                {'54/48秒',54}
+            }},
+            {modid..'_skill3_cooldown','3技能冷却时间','3技能冷却时间(根据精英化等级)',38,{
+                {'28秒',28},
+                {'33秒',33},
+                {'38秒(默认)',38},
+                {'43秒',43},
+                {'48秒',48}
+            }},
+            {modid..'_skill4_cooldown','4技能冷却时间','4技能冷却时间(根据模组等级)',30,{
+                {'20/5秒',20},
+                {'25/10秒',25},
+                {'30/15秒(默认)',30},
+                {'35/20秒',35},
+                {'40/25秒',40}
             }},
             {'技能相关音效'},
             {modid..'_player_skill_volume','人物技能语音音量','人物技能语音音量',0.5,{
@@ -103,6 +131,34 @@ local LANGS = {
                 {'2x',2},
                 {'2.25x',2.25},
                 {'2.5x(Default)',2.5}
+            }},
+            {modid..'_skill1_cooldown','Skill 1 Cooldown Time','Skill 1 cooldown time',30,{
+                {'20s',20},
+                {'25s',25},
+                {'30s(Default)',30},
+                {'35s',35},
+                {'40s',40}
+            }},
+            {modid..'_skill2_cooldown','Skill 2 Cooldown Time','Skill 2 cooldown time(Based on Elite Level)',44,{
+                {'34/28s',34},
+                {'39/33s',39},
+                {'44/38s(Default)',44},
+                {'49/43s',49},
+                {'54/48s',54}
+            }},
+            {modid..'_skill3_cooldown','Skill 3 Cooldown Time','Skill 3 cooldown time(Based on Elite Level)',38,{
+                {'28s',28},
+                {'33s',33},
+                {'38s(Default)',38},
+                {'43s',43},
+                {'48s',48}
+            }},
+            {modid..'_skill4_cooldown','Skill 4 Cooldown Time','Skill 4 cooldown time(Based on Model Level)',30,{
+                {'20/5s',20},
+                {'25/10s',25},
+                {'30/15s(Default)',30},
+                {'35/20s',35},
+                {'40/25s',40}
             }},
             {'Skill Related Sound'},
             {modid..'_player_skill_volume','Character Skill Voice Volume','Character skill voice volume',0.5,{

@@ -56,6 +56,10 @@ for _,v in ipairs({
 	'_enable_zoumadeng_sound',
 	'_player_skill_volume',
 	'_uav_hit_volume',
+	'_skill1_cooldown',
+	'_skill2_cooldown',
+	'_skill3_cooldown',
+	'_skill4_cooldown',
 }) do TUNING[string.upper('CONFIG_'..modid..v)] = GetModConfigData(modid..v) end
 
 
