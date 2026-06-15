@@ -13,6 +13,10 @@ local LANGS = {
                 {'English','en'}
             }},
             {'功能'},
+            {modid..'_enable_item_fix_protection','特殊物品固定保护','开启后会防止特殊物品被交换（变为固定位置），如龙腾式支援无人机、随身充移动电源',false,{
+                {'禁用',false},
+                {'启用',true}
+            }},
             {modid..'_key_light','测绘仪照明开关','测绘仪照明开',118,op},
             {modid..'_key_call_uav','召唤无人机按键','召唤无人机按键',122,op},
             {modid..'_key_mgl_skill','开启技能按键','开启技能按键',120,op},
@@ -108,6 +112,10 @@ local LANGS = {
                 {'English','en'}
             }},
             {'Functions'},
+            {modid..'_enable_item_fix_protection','Special Item Fix Protection','Once activated, it will prevent special items from being traded (becoming fixed position), such as Soaring Dragon and Portable Power Charger',false,{
+                {'Disabled',false},
+                {'Enabled',true}
+            }},
             {modid..'_key_light','Surveyor Light Toggle','Surveyor light on',118,op},
             {modid..'_key_call_uav','UAV Summon Key','UAV summon key',122,op},
             {modid..'_key_mgl_skill','Skill Activation Key','Skill activation key',120,op},
@@ -200,7 +208,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.17'
+version = '1.0.18'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10
