@@ -60,6 +60,8 @@ for _,v in ipairs({
 	'_skill2_cooldown',
 	'_skill3_cooldown',
 	'_skill4_cooldown',
+	'_skill4_call_cooldown',
+	'_enable_evil_penguin',
 }) do TUNING[string.upper('CONFIG_'..modid..v)] = GetModConfigData(modid..v) end
 
 

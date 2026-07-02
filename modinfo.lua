@@ -67,6 +67,16 @@ local LANGS = {
                 {'35/20秒',35},
                 {'40/25秒',40}
             }},
+            {modid..'_skill4_call_cooldown','4技能无人机召唤冷却时间','4技能无人机召唤冷却时间',10,{
+                {'3秒',3},
+                {'4秒',4},
+                {'5秒',5},
+                {'6秒',6},
+                {'7秒',7},
+                {'8秒',8},
+                {'9秒',9},
+                {'10秒(默认)',10}
+            }},
             {'技能相关音效'},
             {modid..'_player_skill_volume','人物技能语音音量','人物技能语音音量',0.5,{
                 {'0%',0},
@@ -96,6 +106,10 @@ local LANGS = {
             }},
             {'奇怪小功能'},
             {modid..'_enable_zoumadeng_sound','死亡走马灯音效','音频作者B站：DJG杰哥',false,{
+                {'禁用',false},
+                {'启用',true}
+            }},
+            {modid..'_enable_evil_penguin','邪恶企鹅模式','开启后所有类型的无人机召唤时间改为1秒',false,{
                 {'禁用',false},
                 {'启用',true}
             }}
@@ -168,6 +182,16 @@ local LANGS = {
                 {'35/20s',35},
                 {'40/25s',40}
             }},
+            {modid..'_skill4_call_cooldown','Skill 4 UAV Summon Cooldown','Skill 4 UAV summon cooldown time',10,{
+                {'3s',3},
+                {'4s',4},
+                {'5s',5},
+                {'6s',6},
+                {'7s',7},
+                {'8s',8},
+                {'9s',9},
+                {'10s(Default)',10},
+            }},
             {'Skill Related Sound'},
             {modid..'_player_skill_volume','Character Skill Voice Volume','Character skill voice volume',0.5,{
                 {'0%',0},
@@ -199,6 +223,10 @@ local LANGS = {
             {modid..'_enable_zoumadeng_sound','Death Sound Effect','Audio author on Bilibili: DJG杰哥',false,{
                 {'Disabled',false},
                 {'Enabled',true}
+            }},
+            {modid..'_enable_evil_penguin','Evil Penguin Mode','Unify all UAV summon cooldown to 1 second when enabled',false,{
+                {'Disabled',false},
+                {'Enabled',true}
             }}
         }
     },
@@ -208,7 +236,7 @@ local LANGS = {
 local cur = (locale == 'zh' or locale == 'zhr') and 'zh' or 'en'
 
 -- mod相关信息
-version = '1.0.18'
+version = '1.0.19'
 author = '玄百秋 & Cues & 亚特兰蒂斯的一条鱼'
 forumthread = ''
 api_version = 10

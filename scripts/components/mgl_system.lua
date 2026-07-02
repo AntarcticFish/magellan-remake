@@ -10,6 +10,10 @@ local function OnCallCoolDownUpdate(self, call_cooldown)
     self.inst.call_cooldown:set(call_cooldown)
 end
 
+local function OnCallCoolDownMaxUpdate(self, call_cooldown_max)
+    self.inst.call_cooldown_max:set(call_cooldown_max)
+end
+
 local function OnSkillCoolDownMaxUpdate(self, skill_cooldown_max)
     self.inst.skill_cooldown_max:set(skill_cooldown_max)
 end
@@ -34,6 +38,7 @@ local Mgl_System = Class(function(self, inst)
     self.uav_type = 1
     self.skill_cooldown = 0
     self.call_cooldown = 0
+    self.call_cooldown_max = 0
     self.skill_cooldown_max = 1
     -- 测绘仪等级（移到人物系统上，原先在物品上）
     self.mgl_mapper_level = 0
@@ -107,6 +112,7 @@ end, nil, {
     uav_type = OnUpdate,
     skill_cooldown = OnSkillCoolDownUpdate,
     call_cooldown = OnCallCoolDownUpdate,
+    call_cooldown_max = OnCallCoolDownMaxUpdate,
     skill_cooldown_max = OnSkillCoolDownMaxUpdate,
 })
 
@@ -349,7 +355,14 @@ function Mgl_System:CallUav()
         end
         if item.components.finiteuses:GetPercent() > 0.2 and not self.call_cd then
             self.call_cd = true
-            self.call_cooldown = 10
+            if SUGAR_magellan_remake:getModConfigDataFromTUNING("_enable_evil_penguin") then
+                self.call_cooldown = 1
+            elseif self.uav_type == 4 then
+                self.call_cooldown = SUGAR_magellan_remake:getModConfigDataFromTUNING("_skill4_call_cooldown") or 10
+            else
+                self.call_cooldown = 10
+            end
+            self.call_cooldown_max = self.call_cooldown
 
             local uav = SpawnPrefab("mgl_uav")
             local pt = self.inst:GetPosition()
@@ -451,6 +464,7 @@ function Mgl_System:CallUav()
                 self.call_cooldown = self.call_cooldown - 1
                 if self.call_cooldown <= 0 then
                     self.call_cooldown = 0
+                    self.call_cooldown_max = 0
                     self.call_cd = false
                     self.call_cooldown_task:Cancel()
                     self.call_cooldown_task = nil

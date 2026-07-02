@@ -175,7 +175,8 @@ function mgl_widget:LoadPosition()
             self.call_uav_button_grey:Show()
             self.call_cooldown_text:Show()
             -- 冷却灰色遮盖，随时间减小覆盖
-            local progress = (self.owner.call_cooldown:value() / 10) * 0.8
+            local max_cd = self.owner.call_cooldown_max:value() or 10
+            local progress = (self.owner.call_cooldown:value() / max_cd) * 0.8
             self.call_uav_button_grey:SetScale(0.8, progress, 0.8)
         else
             self.call_uav_button:SetClickable(true)
